@@ -24,8 +24,11 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
+      - name: Clean cache
+        run: yarn cache clean
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --network-timeout 1000000 --no-bin-links
+        run: yarn install --frozen-lockfile --network-timeout 1000000
 
       - name: Publish Windows
         run: yarn package:ci
