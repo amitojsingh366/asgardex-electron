@@ -38,6 +38,15 @@ export const NoWalletView = () => {
           {intl.formatMessage({ id: 'wallet.empty.phrase.create' })}
         </Label>
       </Styled.ActionContainer>
+
+      <Styled.ActionContainer>
+        <Styled.ActionButton round="true" onClick={importClick}>
+          {intl.formatMessage({ id: 'wallet.action.keepkey' })}
+        </Styled.ActionButton>
+        <Label align="center" color="gray" size="big" textTransform="uppercase">
+          {intl.formatMessage({ id: 'wallet.empty.phrase.keepkey' })}
+        </Label>
+      </Styled.ActionContainer>
     </Styled.ViewContainer>
   )
 }

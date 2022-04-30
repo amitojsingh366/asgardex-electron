@@ -49,7 +49,7 @@ import {
   KeystoreState$,
   KeystoreState,
   ChainBalance,
-  GetLedgerAddressHandler
+  GetHWWalletAddressHandler
 } from './types'
 import { sortBalances } from './util'
 import { hasImportedKeystore } from './util'
@@ -57,11 +57,13 @@ import { hasImportedKeystore } from './util'
 export const createBalancesService = ({
   keystore$,
   network$,
-  getLedgerAddress$
+  getLedgerAddress$,
+  getKeepKeyAddress$
 }: {
   keystore$: KeystoreState$
   network$: Network$
-  getLedgerAddress$: GetLedgerAddressHandler
+  getLedgerAddress$: GetHWWalletAddressHandler
+  getKeepKeyAddress$: GetHWWalletAddressHandler
 }): BalancesService => {
   // reload all balances
   const reloadBalances: FP.Lazy<void> = () => {
@@ -272,14 +274,16 @@ export const createBalancesService = ({
   )
 
   /**
-   * Factory to create a stream of ledger balances by given chain
+   * Factory to create a stream of ledger/keepkey balances by given chain
    */
-  const ledgerChainBalance$ = ({
+  const chainBalance$ = ({
     chain,
+    type,
     walletBalanceType,
     getBalanceByAddress$
   }: {
     chain: Chain
+    type: 'keepkey' | 'ledger'
     walletBalanceType: WalletBalanceType
     getBalanceByAddress$: ({
       address,
@@ -295,7 +299,9 @@ export const createBalancesService = ({
   }): ChainBalance$ =>
     FP.pipe(
       network$,
-      RxOp.switchMap((network) => getLedgerAddress$(chain, network)),
+      type === 'ledger'
+        ? RxOp.switchMap((network) => getLedgerAddress$(chain, network))
+        : RxOp.switchMap((network) => getKeepKeyAddress$(chain, network)),
       RxOp.switchMap((addressRD) =>
         FP.pipe(
           addressRD,
@@ -305,7 +311,7 @@ export const createBalancesService = ({
               // In case we don't get an address,
               // just return `ChainBalance` w/ initial (empty) balances
               Rx.of<ChainBalance>({
-                walletType: 'ledger',
+                walletType: type,
                 chain,
                 walletAddress: O.none,
                 balances: RD.initial,
@@ -316,9 +322,9 @@ export const createBalancesService = ({
               // Load balances by given Ledger address
               // and put it's RD state into `balances` of `ChainBalance`
               FP.pipe(
-                getBalanceByAddress$({ address, walletType: 'ledger', walletIndex, walletBalanceType }),
+                getBalanceByAddress$({ address, walletType: type, walletIndex, walletBalanceType }),
                 RxOp.map<WalletBalancesRD, ChainBalance>((balances) => ({
-                  walletType: 'ledger',
+                  walletType: type,
                   walletIndex,
                   chain,
                   walletAddress: O.some(address),
@@ -334,8 +340,19 @@ export const createBalancesService = ({
   /**
    * THOR Ledger balances
    */
-  const thorLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const thorLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: THORChain,
+    type: 'ledger',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: THOR.getBalanceByAddress$
+  })
+
+  /**
+   * THOR KeepKey balances
+   */
+  const thorKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: THORChain,
+    type: 'keepkey',
     walletBalanceType: 'all',
     getBalanceByAddress$: THOR.getBalanceByAddress$
   })
@@ -360,8 +377,19 @@ export const createBalancesService = ({
   /**
    * LTC Ledger balances
    */
-  const ltcLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const ltcLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: LTCChain,
+    type: 'ledger',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: LTC.getBalanceByAddress$
+  })
+
+  /**
+   * LTC KeepKey balances
+   */
+  const ltcKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: LTCChain,
+    type: 'keepkey',
     walletBalanceType: 'all',
     getBalanceByAddress$: LTC.getBalanceByAddress$
   })
@@ -386,8 +414,19 @@ export const createBalancesService = ({
   /**
    * BCH Ledger balances
    */
-  const bchLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const bchLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: BCHChain,
+    type: 'ledger',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: BCH.getBalanceByAddress$
+  })
+
+  /**
+   * BCH KeepKey balances
+   */
+  const bchKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: BCHChain,
+    type: 'keepkey',
     walletBalanceType: 'all',
     getBalanceByAddress$: BCH.getBalanceByAddress$
   })
@@ -395,8 +434,19 @@ export const createBalancesService = ({
   /**
    * BNB Ledger balances
    */
-  const bnbLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const bnbLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: BNBChain,
+    type: 'ledger',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: BNB.getBalanceByAddress$
+  })
+
+  /**
+   * BNB KeepKey balances
+   */
+  const bnbKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: BNBChain,
+    type: 'keepkey',
     walletBalanceType: 'all',
     getBalanceByAddress$: BNB.getBalanceByAddress$
   })
@@ -427,16 +477,37 @@ export const createBalancesService = ({
   /**
    * BTC Ledger balances
    */
-  const btcLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const btcLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: BTCChain,
+    type: 'ledger',
     walletBalanceType: 'all',
     getBalanceByAddress$: BTC.getBalanceByAddress$('all')
   })
   /**
    * BTC Ledger confirmed balances
    */
-  const btcLedgerChainBalanceConfirmed$: ChainBalance$ = ledgerChainBalance$({
+  const btcLedgerChainBalanceConfirmed$: ChainBalance$ = chainBalance$({
     chain: BTCChain,
+    type: 'ledger',
+    walletBalanceType: 'confirmed',
+    getBalanceByAddress$: BTC.getBalanceByAddress$('confirmed')
+  })
+
+  /**
+   * BTC Ledger balances
+   */
+  const btcKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: BTCChain,
+    type: 'keepkey',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: BTC.getBalanceByAddress$('all')
+  })
+  /**
+   * BTC Ledger confirmed balances
+   */
+  const btcKeepKeyChainBalanceConfirmed$: ChainBalance$ = chainBalance$({
+    chain: BTCChain,
+    type: 'keepkey',
     walletBalanceType: 'confirmed',
     getBalanceByAddress$: BTC.getBalanceByAddress$('confirmed')
   })
@@ -494,8 +565,19 @@ export const createBalancesService = ({
   /**
    * DOGE Ledger balances
    */
-  const dogeLedgerChainBalance$: ChainBalance$ = ledgerChainBalance$({
+  const dogeLedgerChainBalance$: ChainBalance$ = chainBalance$({
     chain: DOGEChain,
+    type: 'keepkey',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: DOGE.getBalanceByAddress$
+  })
+
+  /**
+   * DOGE keepKey balances
+   */
+  const dogeKeepKeyChainBalance$: ChainBalance$ = chainBalance$({
+    chain: DOGEChain,
+    type: 'keepkey',
     walletBalanceType: 'all',
     getBalanceByAddress$: DOGE.getBalanceByAddress$
   })
@@ -547,14 +629,21 @@ export const createBalancesService = ({
   const chainBalances$: ChainBalances$ = FP.pipe(
     Rx.combineLatest(
       filterEnabledChains({
-        THOR: [thorChainBalance$, thorLedgerChainBalance$],
+        THOR: [thorChainBalance$, thorLedgerChainBalance$, thorKeepKeyChainBalance$],
         // for BTC we store `confirmed` or `all` (confirmed + unconfirmed) balances
-        BTC: [btcChainBalance$, btcChainBalanceConfirmed$, btcLedgerChainBalance$, btcLedgerChainBalanceConfirmed$],
-        BCH: [bchChainBalance$, bchLedgerChainBalance$],
+        BTC: [
+          btcChainBalance$,
+          btcChainBalanceConfirmed$,
+          btcLedgerChainBalance$,
+          btcLedgerChainBalanceConfirmed$,
+          btcKeepKeyChainBalance$,
+          btcKeepKeyChainBalanceConfirmed$
+        ],
+        BCH: [bchChainBalance$, bchLedgerChainBalance$, bchKeepKeyChainBalance$],
         ETH: [ethChainBalance$],
-        BNB: [bnbChainBalance$, bnbLedgerChainBalance$],
-        LTC: [ltcBalance$, ltcLedgerChainBalance$],
-        DOGE: [dogeChainBalance$, dogeLedgerChainBalance$],
+        BNB: [bnbChainBalance$, bnbLedgerChainBalance$, bnbKeepKeyChainBalance$],
+        LTC: [ltcBalance$, ltcLedgerChainBalance$, ltcKeepKeyChainBalance$],
+        DOGE: [dogeChainBalance$, dogeLedgerChainBalance$, dogeKeepKeyChainBalance$],
         TERRA: [terraChainBalance$]
       })
     ),

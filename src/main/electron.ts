@@ -24,6 +24,7 @@ import {
   deposit as depositLedgerTx,
   verifyLedgerAddress
 } from './api/ledger'
+import { getAddress as getKeepKepAddress } from './api/ledger'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
 
@@ -147,6 +148,9 @@ const initIPC = () => {
   ipcMain.handle(IPCMessages.LOAD_KEYSTORE, () => loadKeystore())
   // Ledger
   ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) => getLedgerAddress(params))
+  ipcMain.handle(IPCMessages.GET_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
+    getKeepKepAddress(params)
+  )
   ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
     verifyLedgerAddress(params)
   )

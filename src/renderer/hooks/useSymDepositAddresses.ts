@@ -14,7 +14,7 @@ import { useChainContext } from '../contexts/ChainContext'
 import { useWalletContext } from '../contexts/WalletContext'
 import { INITIAL_SYM_DEPOSIT_ADDRESSES } from '../services/chain/const'
 import { SymDepositAddresses } from '../services/chain/types'
-import { LedgerAddressRD } from '../services/wallet/types'
+import { HWWalletAddressRD } from '../services/wallet/types'
 import { useLedger } from './useLedger'
 import { useNetwork } from './useNetwork'
 
@@ -66,7 +66,7 @@ export const useSymDepositAddresses = (oAsset: O.Option<Asset>) => {
       INITIAL_SYM_DEPOSIT_ADDRESSES
     )
 
-  const assetLedgerAddressRD = useObservableState<LedgerAddressRD>(
+  const assetHWWalletAddressRD = useObservableState<HWWalletAddressRD>(
     FP.pipe(
       oAsset,
       O.fold(
@@ -77,10 +77,10 @@ export const useSymDepositAddresses = (oAsset: O.Option<Asset>) => {
     RD.initial
   )
 
-  const assetLedgerAddress = RD.toOption(assetLedgerAddressRD)
+  const assetLedgerAddress = RD.toOption(assetHWWalletAddressRD)
 
-  const { address: runeLedgerAddressRD } = useLedger(THORChain)
-  const runeLedgerAddress = RD.toOption(runeLedgerAddressRD)
+  const { address: runeHWWalletAddressRD } = useLedger(THORChain)
+  const runeLedgerAddress = RD.toOption(runeHWWalletAddressRD)
 
   const setAssetWalletType = useCallback(
     (walletType: WalletType) => {

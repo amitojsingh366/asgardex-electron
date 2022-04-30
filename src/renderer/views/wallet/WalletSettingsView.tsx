@@ -49,7 +49,7 @@ import { sequenceTOptionFromArray } from '../../helpers/fpHelpers'
 import { useLedger } from '../../hooks/useLedger'
 import { DEFAULT_NETWORK } from '../../services/const'
 import { WalletAddressAsync } from '../../services/wallet/types'
-import { ledgerErrorIdToI18n } from '../../services/wallet/util'
+import { HWWalletErrorIdToI18n } from '../../services/wallet/util'
 import { getPhrase } from '../../services/wallet/util'
 import { walletAccount$ } from './WalletSettingsView.helper'
 
@@ -84,42 +84,42 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
   const {
     askAddress: askLedgerThorAddress,
     verifyAddress: verifyLedgerThorAddress,
-    address: thorLedgerAddressRD,
+    address: thorHWWalletAddressRD,
     removeAddress: removeLedgerThorAddress
   } = useLedger(THORChain)
 
   const {
     askAddress: askLedgerBnbAddress,
     verifyAddress: verifyLedgerBnbAddress,
-    address: bnbLedgerAddressRD,
+    address: bnbHWWalletAddressRD,
     removeAddress: removeLedgerBnbAddress
   } = useLedger(BNBChain)
 
   const {
     askAddress: askLedgerBtcAddress,
     verifyAddress: verifyLedgerBtcAddress,
-    address: btcLedgerAddressRD,
+    address: btcHWWalletAddressRD,
     removeAddress: removeLedgerBtcAddress
   } = useLedger(BTCChain)
 
   const {
     askAddress: askLedgerLtcAddress,
     verifyAddress: verifyLedgerLtcAddress,
-    address: ltcLedgerAddressRD,
+    address: ltcHWWalletAddressRD,
     removeAddress: removeLedgerLtcAddress
   } = useLedger(LTCChain)
 
   const {
     askAddress: askLedgerBchAddress,
     verifyAddress: verifyLedgerBchAddress,
-    address: bchLedgerAddressRD,
+    address: bchHWWalletAddressRD,
     removeAddress: removeLedgerBchAddress
   } = useLedger(BCHChain)
 
   const {
     askAddress: askLedgerDOGEAddress,
     verifyAddress: verifyLedgerDOGEAddress,
-    address: dogeLedgerAddressRD,
+    address: dogeHWWalletAddressRD,
     removeAddress: removeLedgerDOGEAddress
   } = useLedger(DOGEChain)
 
@@ -207,66 +207,66 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        thorLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        thorHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, thorLedgerAddressRD]
+    [intl, thorHWWalletAddressRD]
   )
 
   const bnbLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        bnbLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        bnbHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, bnbLedgerAddressRD]
+    [intl, bnbHWWalletAddressRD]
   )
 
   const btcLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        btcLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        btcHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, btcLedgerAddressRD]
+    [intl, btcHWWalletAddressRD]
   )
 
   const ltcLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        ltcLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        ltcHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, ltcLedgerAddressRD]
+    [intl, ltcHWWalletAddressRD]
   )
 
   const bchLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        bchLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        bchHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, bchLedgerAddressRD]
+    [intl, bchHWWalletAddressRD]
   )
 
   const dogeLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        dogeLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        dogeHWWalletAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, dogeLedgerAddressRD]
+    [intl, dogeHWWalletAddressRD]
   )
 
   const walletAccounts$ = useMemo(() => {

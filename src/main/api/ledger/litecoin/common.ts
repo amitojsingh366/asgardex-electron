@@ -1,6 +1,6 @@
 import { Network } from '@xchainjs/xchain-client'
 
-import { LedgerErrorId } from '../../../../shared/api/types'
+import { HWWalletErrorId } from '../../../../shared/api/types'
 
 // TODO(@veado) Extend`xchain-litecoin` to get derivation path from it
 // Similar to default values in `Client` of `xchain-litecoin`
@@ -15,9 +15,9 @@ export const getDerivationPath = (walletIndex: number, network: Network): string
   return path
 }
 
-export const fromLedgerErrorType = (error: number): LedgerErrorId => {
+export const fromHWWalletErrorType = (error: number): HWWalletErrorId => {
   switch (error) {
     default:
-      return LedgerErrorId.UNKNOWN
+      return HWWalletErrorId.UNKNOWN
   }
 }

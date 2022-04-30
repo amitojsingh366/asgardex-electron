@@ -14,7 +14,7 @@ import {
   IPCLedgerSendTxParams,
   ipcLedgerSendTxParamsIO
 } from '../../../shared/api/io'
-import { LedgerError, Network } from '../../../shared/api/types'
+import { HWWalletError, Network } from '../../../shared/api/types'
 import { isLedgerWallet } from '../../../shared/utils/guard'
 import { WalletType } from '../../../shared/wallet/types'
 import { retryRequest } from '../../helpers/rx/retryRequest'
@@ -48,7 +48,7 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       Rx.from(window.apiHDWallet.depositLedgerTx(encoded)),
       RxOp.switchMap(
         FP.flow(
-          E.fold<LedgerError, TxHash, TxHashLD>(
+          E.fold<HWWalletError, TxHash, TxHashLD>(
             ({ msg }) =>
               Rx.of(
                 RD.failure({
@@ -131,7 +131,7 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       Rx.from(window.apiHDWallet.sendLedgerTx(encoded)),
       RxOp.switchMap(
         FP.flow(
-          E.fold<LedgerError, TxHash, TxHashLD>(
+          E.fold<HWWalletError, TxHash, TxHashLD>(
             ({ msg }) =>
               Rx.of(
                 RD.failure({

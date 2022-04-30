@@ -4,7 +4,7 @@ import { BCHChain, BNBChain, BTCChain, DOGEChain, LTCChain, THORChain } from '@x
 import * as E from 'fp-ts/Either'
 
 import { IPCLedgerDepositTxParams, IPCLedgerSendTxParams } from '../../../shared/api/io'
-import { LedgerError, LedgerErrorId } from '../../../shared/api/types'
+import { HWWalletError, HWWalletErrorId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
 import * as BNB from './binance/transaction'
 import * as BTC from './bitcoin/transaction'
@@ -23,10 +23,10 @@ export const sendTx = async ({
   memo,
   feeRate,
   walletIndex
-}: IPCLedgerSendTxParams): Promise<E.Either<LedgerError, TxHash>> => {
+}: IPCLedgerSendTxParams): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const transport = await TransportNodeHidSingleton.open()
-    let res: E.Either<LedgerError, string>
+    let res: E.Either<HWWalletError, string>
     switch (chain) {
       case THORChain:
         res = await THOR.send({
@@ -91,7 +91,7 @@ export const sendTx = async ({
         break
       default:
         res = E.left({
-          errorId: LedgerErrorId.NOT_IMPLEMENTED,
+          errorId: HWWalletErrorId.NOT_IMPLEMENTED,
           msg: `'sendTx' for ${chain} has not been implemented`
         })
     }
@@ -99,7 +99,7 @@ export const sendTx = async ({
     return res
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }
@@ -111,17 +111,17 @@ export const deposit = async ({
   amount,
   memo,
   walletIndex
-}: IPCLedgerDepositTxParams): Promise<E.Either<LedgerError, TxHash>> => {
+}: IPCLedgerDepositTxParams): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const transport = await TransportNodeHidSingleton.open()
-    let res: E.Either<LedgerError, string>
+    let res: E.Either<HWWalletError, string>
     switch (chain) {
       case THORChain:
         res = await THOR.deposit({ transport, network, amount, memo, walletIndex: walletIndex ? walletIndex : 0 })
         break
       default:
         res = E.left({
-          errorId: LedgerErrorId.NOT_IMPLEMENTED,
+          errorId: HWWalletErrorId.NOT_IMPLEMENTED,
           msg: `'deposit' for ${chain} has not been implemented`
         })
     }
@@ -129,7 +129,7 @@ export const deposit = async ({
     return res
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

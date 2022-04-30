@@ -14,14 +14,14 @@ import {
 } from '@xchainjs/xchain-util'
 import * as O from 'fp-ts/lib/Option'
 
-import { LedgerErrorId } from '../../../shared/api/types'
+import { HWWalletErrorId } from '../../../shared/api/types'
 import { BNB_ADDRESS_TESTNET, RUNE_ADDRESS_TESTNET } from '../../../shared/mock/address'
 import { ASSETS_TESTNET } from '../../../shared/mock/assets'
 import { WalletAddress } from '../../../shared/wallet/types'
 import { SymDepositAddresses } from '../../services/chain/types'
 import { PoolAddress, PoolShare } from '../../services/midgard/types'
 import { INITIAL_LEDGER_ADDRESS_MAP } from '../../services/wallet/const'
-import { ApiError, ErrorId, LedgerAddressMap } from '../../services/wallet/types'
+import { ApiError, ErrorId, HWWalletAddressMap } from '../../services/wallet/types'
 import { AssetWithAmount } from '../../types/asgardex'
 import { PricePool } from '../../views/pools/Pools.types'
 import { mockWalletAddress } from '../test/testWalletHelper'
@@ -44,7 +44,7 @@ import {
   eqAssetAmount,
   eqPricePool,
   eqOString,
-  eqLedgerAddressMap,
+  eqHWWalletAddressMap,
   eqWalletAddress,
   eqOWalletAddress,
   eqSymDepositAddresses
@@ -434,27 +434,27 @@ describe('helpers/fp/eq', () => {
     })
   })
 
-  describe('eqLedgerAddressMap', () => {
-    const a: LedgerAddressMap = INITIAL_LEDGER_ADDRESS_MAP
-    const b: LedgerAddressMap = {
+  describe('eqHWWalletAddressMap', () => {
+    const a: HWWalletAddressMap = INITIAL_LEDGER_ADDRESS_MAP
+    const b: HWWalletAddressMap = {
       ...INITIAL_LEDGER_ADDRESS_MAP,
       mainnet: RD.pending
     }
-    const c: LedgerAddressMap = {
+    const c: HWWalletAddressMap = {
       ...INITIAL_LEDGER_ADDRESS_MAP,
-      testnet: RD.failure({ errorId: LedgerErrorId.DENIED, msg: '' })
+      testnet: RD.failure({ errorId: HWWalletErrorId.DENIED, msg: '' })
     }
 
     it('is equal', () => {
-      expect(eqLedgerAddressMap.equals(a, a)).toBeTruthy()
-      expect(eqLedgerAddressMap.equals(b, b)).toBeTruthy()
-      expect(eqLedgerAddressMap.equals(c, c)).toBeTruthy()
+      expect(eqHWWalletAddressMap.equals(a, a)).toBeTruthy()
+      expect(eqHWWalletAddressMap.equals(b, b)).toBeTruthy()
+      expect(eqHWWalletAddressMap.equals(c, c)).toBeTruthy()
     })
     it('is not equal', () => {
-      expect(eqLedgerAddressMap.equals(a, b)).toBeFalsy()
-      expect(eqLedgerAddressMap.equals(b, a)).toBeFalsy()
-      expect(eqLedgerAddressMap.equals(a, c)).toBeFalsy()
-      expect(eqLedgerAddressMap.equals(c, b)).toBeFalsy()
+      expect(eqHWWalletAddressMap.equals(a, b)).toBeFalsy()
+      expect(eqHWWalletAddressMap.equals(b, a)).toBeFalsy()
+      expect(eqHWWalletAddressMap.equals(a, c)).toBeFalsy()
+      expect(eqHWWalletAddressMap.equals(c, b)).toBeFalsy()
     })
   })
 

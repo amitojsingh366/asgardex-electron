@@ -5,7 +5,7 @@ import { Address, TxHash } from '@xchainjs/xchain-client'
 import { Asset, AssetBNB, BaseAmount, baseToAsset } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/lib/Either'
 
-import { LedgerError, LedgerErrorId, Network } from '../../../../shared/api/types'
+import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 
@@ -30,7 +30,7 @@ export const send = async ({
   asset?: Asset
   memo?: string
   walletIndex: number
-}): Promise<E.Either<LedgerError, TxHash>> => {
+}): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const clientNetwork = toClientNetwork(network)
     const prefix = getPrefix(clientNetwork)
@@ -53,7 +53,7 @@ export const send = async ({
 
     if (!sender) {
       return E.left({
-        errorId: LedgerErrorId.GET_ADDRESS_FAILED,
+        errorId: HWWalletErrorId.GET_ADDRESS_FAILED,
         msg: `Getting sender address using Ledger failed`
       })
     }
@@ -68,7 +68,7 @@ export const send = async ({
 
     if (result.length === 0 || !result[0].hash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Binance client failed to send ${asset?.symbol ?? AssetBNB.symbol} transaction using Ledger`
       })
     }
@@ -76,7 +76,7 @@ export const send = async ({
 
     if (!txhash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Post request to send ${asset?.symbol ?? AssetBNB.symbol} transaction by using Ledger failed`
       })
     }
@@ -84,7 +84,7 @@ export const send = async ({
     return E.right(txhash)
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

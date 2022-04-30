@@ -9,7 +9,7 @@ import { WalletType } from '../../../shared/wallet/types'
 import { LiveData } from '../../helpers/rx/liveData'
 import { Memo } from '../chain/types'
 import * as C from '../clients'
-import { LedgerAddressLD, LedgerTxHashLD } from '../wallet/types'
+import { HWWalletAddressLD, LedgerTxHashLD } from '../wallet/types'
 
 export type Client$ = C.Client$<Client>
 
@@ -40,10 +40,16 @@ export type FeesService = C.FeesService & {
 }
 
 export type LedgerService = {
-  ledgerAddress$: LedgerAddressLD
+  ledgerAddress$: HWWalletAddressLD
   retrieveLedgerAddress: (network: Network, walletIndex: number) => void
   removeLedgerAddress: () => void
   ledgerTxRD$: LedgerTxHashLD
   pushLedgerTx: (network: Network, params: LedgerBTCTxInfo) => Rx.Subscription
   resetLedgerTx: () => void
+}
+
+export type KeepKeyService = {
+  keepkeyAddress$: HWWalletAddressLD
+  retrieveKeepKeyAddress: (network: Network, walletIndex: number) => void
+  removeKeepKeyAddress: () => void
 }

@@ -1,7 +1,7 @@
 import { Address } from '@xchainjs/xchain-client'
 import { Chain } from '@xchainjs/xchain-util'
 
-export type WalletType = 'keystore' | 'ledger'
+export type WalletType = 'keystore' | 'ledger' | 'keepkey'
 
 export type WalletBalanceType = 'all' | 'confirmed'
 

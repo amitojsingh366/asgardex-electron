@@ -8,7 +8,7 @@ import * as Bitcoin from 'bitcoinjs-lib'
 import * as E from 'fp-ts/lib/Either'
 
 import { getHaskoinBCHApiUrl } from '../../../../shared/api/haskoin'
-import { LedgerError, LedgerErrorId, Network } from '../../../../shared/api/types'
+import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 import { getDerivationPath } from './common'
@@ -34,10 +34,10 @@ export const send = async ({
   feeRate: FeeRate
   memo?: string
   walletIndex: number
-}): Promise<E.Either<LedgerError, TxHash>> => {
+}): Promise<E.Either<HWWalletError, TxHash>> => {
   if (!sender) {
     return E.left({
-      errorId: LedgerErrorId.GET_ADDRESS_FAILED,
+      errorId: HWWalletErrorId.GET_ADDRESS_FAILED,
       msg: `Getting sender address using Ledger failed`
     })
   }
@@ -92,14 +92,14 @@ export const send = async ({
 
     if (!txHash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Post request to send BCH transaction using Ledger failed`
       })
     }
     return E.right(txHash)
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

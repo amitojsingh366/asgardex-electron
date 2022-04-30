@@ -10,12 +10,12 @@ import * as N from 'fp-ts/lib/number'
 import * as O from 'fp-ts/lib/Option'
 import * as S from 'fp-ts/lib/string'
 
-import { LedgerError } from '../../../shared/api/types'
+import { HWWalletError } from '../../../shared/api/types'
 import { WalletAddress, WalletType } from '../../../shared/wallet/types'
 import { DepositAssetFees, DepositFees, SwapFeesParams, SymDepositAddresses } from '../../services/chain/types'
 import { ApproveParams } from '../../services/ethereum/types'
 import { PoolAddress, PoolShare } from '../../services/midgard/types'
-import { ApiError, LedgerAddressMap, WalletBalance } from '../../services/wallet/types'
+import { ApiError, HWWalletAddressMap, WalletBalance } from '../../services/wallet/types'
 import { AssetWithAmount } from '../../types/asgardex'
 import { PricePool } from '../../views/pools/Pools.types'
 
@@ -177,9 +177,9 @@ export const eqPricePool = Eq.struct<PricePool>({
   poolData: eqPoolData
 })
 
-export const eqLedgerErrorId = eqString
-const eqLedgerError = Eq.struct<LedgerError>({
-  errorId: eqLedgerErrorId,
+export const eqHWWalletErrorId = eqString
+const eqHWWalletError = Eq.struct<HWWalletError>({
+  errorId: eqHWWalletErrorId,
   msg: eqString
 })
 
@@ -194,12 +194,12 @@ export const eqWalletAddress = Eq.struct<WalletAddress>({
 
 export const eqOWalletAddress = O.getEq(eqWalletAddress)
 
-export const eqLedgerAddressRD = RD.getEq<LedgerError, WalletAddress>(eqLedgerError, eqWalletAddress)
+export const eqHWWalletAddressRD = RD.getEq<HWWalletError, WalletAddress>(eqHWWalletError, eqWalletAddress)
 
-export const eqLedgerAddressMap = Eq.struct<LedgerAddressMap>({
-  testnet: eqLedgerAddressRD,
-  stagenet: eqLedgerAddressRD,
-  mainnet: eqLedgerAddressRD
+export const eqHWWalletAddressMap = Eq.struct<HWWalletAddressMap>({
+  testnet: eqHWWalletAddressRD,
+  stagenet: eqHWWalletAddressRD,
+  mainnet: eqHWWalletAddressRD
 })
 
 export const eqSymDepositAddresses = Eq.struct<SymDepositAddresses>({

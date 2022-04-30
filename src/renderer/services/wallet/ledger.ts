@@ -4,18 +4,18 @@ import * as FP from 'fp-ts/lib/function'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import { LedgerErrorId, Network } from '../../../shared/api/types'
+import { HWWalletErrorId, Network } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
-import { eqLedgerAddressMap } from '../../helpers/fp/eq'
+import { eqHWWalletAddressMap } from '../../helpers/fp/eq'
 import { observableState } from '../../helpers/stateHelper'
 import { INITIAL_LEDGER_ADDRESSES_MAP } from './const'
 import {
-  GetLedgerAddressHandler,
+  GetHWWalletAddressHandler,
   KeystoreState,
   KeystoreState$,
-  LedgerAddressesMap,
-  LedgerAddressLD,
-  LedgerAddressRD,
+  HWWalletAddressesMap,
+  HWWalletAddressLD,
+  HWWalletAddressRD,
   LedgerService,
   VerifyLedgerAddressHandler
 } from './types'
@@ -27,14 +27,14 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
     get$: ledgerAddresses$,
     get: ledgerAddresses,
     set: setLedgerAddresses
-  } = observableState<LedgerAddressesMap>(INITIAL_LEDGER_ADDRESSES_MAP)
+  } = observableState<HWWalletAddressesMap>(INITIAL_LEDGER_ADDRESSES_MAP)
 
-  const setLedgerAddressRD = ({
+  const setHWWalletAddressRD = ({
     addressRD,
     chain,
     network
   }: {
-    addressRD: LedgerAddressRD
+    addressRD: HWWalletAddressRD
     chain: Chain
     network: Network
   }) => {
@@ -46,11 +46,11 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
   /**
    * Get ledger address from memory
    */
-  const getLedgerAddress$: GetLedgerAddressHandler = (chain, network) =>
+  const getLedgerAddress$: GetHWWalletAddressHandler = (chain, network) =>
     FP.pipe(
       ledgerAddresses$,
       RxOp.map((addressesMap) => addressesMap[chain]),
-      RxOp.distinctUntilChanged(eqLedgerAddressMap.equals),
+      RxOp.distinctUntilChanged(eqHWWalletAddressMap.equals),
       RxOp.map((addressMap) => addressMap[network])
     )
 
@@ -61,7 +61,7 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
    * Removes ledger address from memory
    */
   const removeLedgerAddress = (chain: Chain, network: Network): void =>
-    setLedgerAddressRD({
+    setHWWalletAddressRD({
       addressRD: RD.initial,
       chain,
       network
@@ -71,7 +71,7 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
    * Sets ledger address in `pending` state
    */
   const setPendingLedgerAddress = (chain: Chain, network: Network): void =>
-    setLedgerAddressRD({
+    setHWWalletAddressRD({
       addressRD: RD.pending,
       chain,
       network
@@ -80,7 +80,7 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
   /**
    * Ask Ledger to get address from it
    */
-  const askLedgerAddress$ = (chain: Chain, network: Network, walletIndex: number): LedgerAddressLD =>
+  const askLedgerAddress$ = (chain: Chain, network: Network, walletIndex: number): HWWalletAddressLD =>
     FP.pipe(
       // remove address from memory
       removeLedgerAddress(chain, network),
@@ -90,11 +90,11 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
       () => Rx.from(window.apiHDWallet.getLedgerAddress({ chain, network, walletIndex })),
       RxOp.map(RD.fromEither),
       // store address in memory
-      RxOp.tap((addressRD: LedgerAddressRD) => setLedgerAddressRD({ chain, addressRD, network })),
+      RxOp.tap((addressRD: HWWalletAddressRD) => setHWWalletAddressRD({ chain, addressRD, network })),
       RxOp.catchError((error) =>
         Rx.of(
           RD.failure({
-            errorId: LedgerErrorId.GET_ADDRESS_FAILED,
+            errorId: HWWalletErrorId.GET_ADDRESS_FAILED,
             msg: isError(error) ? error.toString() : `${error}`
           })
         )

@@ -8,7 +8,7 @@ import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as O from 'fp-ts/lib/Option'
 import * as Rx from 'rxjs'
 
-import { LedgerError, Network } from '../../../shared/api/types'
+import { HWWalletError, Network } from '../../../shared/api/types'
 import { WalletAddress, WalletBalanceType, WalletType } from '../../../shared/wallet/types'
 import { LiveData } from '../../helpers/rx/liveData'
 import { LoadTxsParams, WalletBalancesLD, WalletBalancesRD } from '../clients'
@@ -137,7 +137,7 @@ export type BalancesService = {
   dispose: FP.Lazy<void>
 }
 
-export type GetLedgerAddressHandler = (chain: Chain, network: Network) => LedgerAddressLD
+export type GetHWWalletAddressHandler = (chain: Chain, network: Network) => HWWalletAddressLD
 export type VerifyLedgerAddressHandler = (params: {
   chain: Chain
   network: Network
@@ -145,11 +145,19 @@ export type VerifyLedgerAddressHandler = (params: {
 }) => Promise<boolean>
 
 export type LedgerService = {
-  ledgerAddresses$: Rx.Observable<LedgerAddressesMap>
-  askLedgerAddress$: (chain: Chain, network: Network, walletIndex: number) => LedgerAddressLD
-  getLedgerAddress$: GetLedgerAddressHandler
+  ledgerAddresses$: Rx.Observable<HWWalletAddressesMap>
+  askLedgerAddress$: (chain: Chain, network: Network, walletIndex: number) => HWWalletAddressLD
+  getLedgerAddress$: GetHWWalletAddressHandler
   verifyLedgerAddress: VerifyLedgerAddressHandler
   removeLedgerAddress: (chain: Chain, network: Network) => void
+  dispose: FP.Lazy<void>
+}
+
+export type KeepKeyService = {
+  keepkeyAddresses$: Rx.Observable<HWWalletAddressesMap>
+  askKeepKeyAddress$: (chain: Chain, network: Network, walletIndex: number) => HWWalletAddressLD
+  getKeepKeyAddress$: GetHWWalletAddressHandler
+  removeKeepKeyAddress: (chain: Chain, network: Network) => void
   dispose: FP.Lazy<void>
 }
 
@@ -168,14 +176,14 @@ export type TxLD = LiveData<ApiError, Tx>
 /* RD/LD for sending transactions on different chains */
 export type TxHashRD = RD.RemoteData<ApiError, TxHash>
 export type TxHashLD = LiveData<ApiError, TxHash>
-export type LedgerTxHashRD = RD.RemoteData<LedgerError, TxHash>
-export type LedgerTxHashLD = LiveData<LedgerError, TxHash>
+export type LedgerTxHashRD = RD.RemoteData<HWWalletError, TxHash>
+export type LedgerTxHashLD = LiveData<HWWalletError, TxHash>
 
-export type LedgerAddressRD = RD.RemoteData<LedgerError, WalletAddress>
-export type LedgerAddressLD = LiveData<LedgerError, WalletAddress>
+export type HWWalletAddressRD = RD.RemoteData<HWWalletError, WalletAddress>
+export type HWWalletAddressLD = LiveData<HWWalletError, WalletAddress>
 
-export type LedgerAddressMap = Record<Network, LedgerAddressRD>
-export type LedgerAddressMap$ = Rx.Observable<LedgerAddressMap>
+export type HWWalletAddressMap = Record<Network, HWWalletAddressRD>
+export type HWWalletAddressMap$ = Rx.Observable<HWWalletAddressMap>
 
-export type LedgerAddressesMap = Record<Chain, LedgerAddressMap>
-export type LedgerAddressesMap$ = Rx.Observable<LedgerAddressesMap>
+export type HWWalletAddressesMap = Record<Chain, HWWalletAddressMap>
+export type HWWalletAddressesMap$ = Rx.Observable<HWWalletAddressesMap>

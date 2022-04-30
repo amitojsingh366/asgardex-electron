@@ -8,8 +8,8 @@ import {
   BalancesState,
   BalancesStateFilter,
   KeystoreState,
-  LedgerAddressesMap,
-  LedgerAddressMap,
+  HWWalletAddressesMap,
+  HWWalletAddressMap,
   LoadTxsHandler
 } from './types'
 
@@ -41,13 +41,13 @@ export const INITIAL_LOAD_TXS_PROPS: LoadTxsParams = {
 
 export const EMPTY_LOAD_TXS_HANDLER: LoadTxsHandler = (_: LoadTxsParams) => {}
 
-export const INITIAL_LEDGER_ADDRESS_MAP: LedgerAddressMap = {
+export const INITIAL_LEDGER_ADDRESS_MAP: HWWalletAddressMap = {
   mainnet: RD.initial,
   stagenet: RD.initial,
   testnet: RD.initial
 }
 
-export const INITIAL_LEDGER_ADDRESSES_MAP: LedgerAddressesMap = {
+export const INITIAL_LEDGER_ADDRESSES_MAP: HWWalletAddressesMap = {
   [Chain.Binance]: INITIAL_LEDGER_ADDRESS_MAP,
   [Chain.Bitcoin]: INITIAL_LEDGER_ADDRESS_MAP,
   [Chain.BitcoinCash]: INITIAL_LEDGER_ADDRESS_MAP,

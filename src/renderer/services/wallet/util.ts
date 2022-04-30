@@ -7,7 +7,7 @@ import * as Ord from 'fp-ts/Ord'
 import * as S from 'fp-ts/string'
 import { IntlShape } from 'react-intl'
 
-import { LedgerErrorId } from '../../../shared/api/types'
+import { HWWalletErrorId } from '../../../shared/api/types'
 import { WalletType } from '../../../shared/wallet/types'
 import { eqAsset } from '../../helpers/fp/eq'
 import { ordBaseAmount } from '../../helpers/fp/ord'
@@ -80,39 +80,39 @@ export const walletTypeToI18n = (type: WalletType, intl: IntlShape) => {
   }
 }
 
-export const ledgerErrorIdToI18n = (errorId: LedgerErrorId, intl: IntlShape) => {
+export const HWWalletErrorIdToI18n = (errorId: HWWalletErrorId, intl: IntlShape) => {
   switch (errorId) {
-    case LedgerErrorId.NO_DEVICE:
+    case HWWalletErrorId.NO_DEVICE:
       return intl.formatMessage({ id: 'ledger.error.nodevice' })
-    case LedgerErrorId.ALREADY_IN_USE:
+    case HWWalletErrorId.ALREADY_IN_USE:
       return intl.formatMessage({ id: 'ledger.error.inuse' })
-    case LedgerErrorId.APP_NOT_OPENED:
+    case HWWalletErrorId.APP_NOT_OPENED:
       return intl.formatMessage({ id: 'ledger.error.appnotopened' })
-    case LedgerErrorId.NO_APP:
+    case HWWalletErrorId.NO_APP:
       return intl.formatMessage({ id: 'ledger.error.noapp' })
-    case LedgerErrorId.GET_ADDRESS_FAILED:
+    case HWWalletErrorId.GET_ADDRESS_FAILED:
       return intl.formatMessage({ id: 'ledger.error.getaddressfailed' })
-    case LedgerErrorId.SIGN_FAILED:
+    case HWWalletErrorId.SIGN_FAILED:
       return intl.formatMessage({ id: 'ledger.error.signfailed' })
-    case LedgerErrorId.SEND_TX_FAILED:
+    case HWWalletErrorId.SEND_TX_FAILED:
       return intl.formatMessage({ id: 'ledger.error.sendfailed' })
-    case LedgerErrorId.DEPOSIT_TX_FAILED:
+    case HWWalletErrorId.DEPOSIT_TX_FAILED:
       return intl.formatMessage({ id: 'ledger.error.deposit' })
-    case LedgerErrorId.DENIED:
+    case HWWalletErrorId.DENIED:
       return intl.formatMessage({ id: 'ledger.error.denied' })
-    case LedgerErrorId.INVALID_PUBKEY:
+    case HWWalletErrorId.INVALID_PUBKEY:
       return intl.formatMessage({ id: 'ledger.error.invalidpubkey' })
-    case LedgerErrorId.INVALID_DATA:
+    case HWWalletErrorId.INVALID_DATA:
       return intl.formatMessage({ id: 'ledger.error.invaliddata' })
-    case LedgerErrorId.REJECTED:
+    case HWWalletErrorId.REJECTED:
       return intl.formatMessage({ id: 'ledger.error.rejected' })
-    case LedgerErrorId.TIMEOUT:
+    case HWWalletErrorId.TIMEOUT:
       return intl.formatMessage({ id: 'ledger.error.timeout' })
-    case LedgerErrorId.INVALID_RESPONSE:
+    case HWWalletErrorId.INVALID_RESPONSE:
       return intl.formatMessage({ id: 'ledger.error.invalidresponse' })
-    case LedgerErrorId.NOT_IMPLEMENTED:
+    case HWWalletErrorId.NOT_IMPLEMENTED:
       return intl.formatMessage({ id: 'ledger.error.notimplemented' })
-    // default is similar to LedgerErrorId.UNKNOWN
+    // default is similar to HWWalletErrorId.UNKNOWN
     default:
       return intl.formatMessage({ id: 'ledger.error.unknown' })
   }

@@ -2,6 +2,7 @@ import { network$ } from '../app/service'
 import { balances$, reloadBalances, getBalanceByAddress$, reloadBalances$, resetReloadBalances } from './balances'
 import { client$, clientState$, address$, addressUI$, explorerUrl$ } from './common'
 import { createFeesService } from './fees'
+import { createKeepKeyService } from './keepkey'
 import { createLedgerService } from './ledger'
 import { createTransactionService } from './transaction'
 
@@ -9,6 +10,7 @@ const { subscribeTx, txRD$, resetTx, sendTx, txs$, tx$, txStatus$ } = createTran
 const { fees$, reloadFees, feesWithRates$, reloadFeesWithRates } = createFeesService(client$)
 const { ledgerAddress$, retrieveLedgerAddress, removeLedgerAddress, pushLedgerTx, ledgerTxRD$, resetLedgerTx } =
   createLedgerService()
+const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress } = createKeepKeyService()
 
 export {
   client$,
@@ -37,5 +39,8 @@ export {
   removeLedgerAddress,
   pushLedgerTx,
   ledgerTxRD$,
-  resetLedgerTx
+  resetLedgerTx,
+  keepkeyAddress$,
+  removeKeepKeyAddress,
+  retrieveKeepKeyAddress
 }

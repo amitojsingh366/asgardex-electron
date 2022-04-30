@@ -5,12 +5,12 @@ import * as FP from 'fp-ts/lib/function'
 import * as Rx from 'rxjs'
 import { catchError, map, startWith } from 'rxjs/operators'
 
-import { LedgerBTCTxInfo, LedgerErrorId, Network } from '../../../shared/api/types'
+import { LedgerBTCTxInfo, HWWalletErrorId, Network } from '../../../shared/api/types'
 import { observableState } from '../../helpers/stateHelper'
-import { LedgerAddressRD, LedgerTxHashLD, LedgerTxHashRD } from '../wallet/types'
+import { HWWalletAddressRD, LedgerTxHashLD, LedgerTxHashRD } from '../wallet/types'
 import { LedgerService } from './types'
 
-const { get$: ledgerAddress$, set: setLedgerAddressRD } = observableState<LedgerAddressRD>(RD.initial)
+const { get$: ledgerAddress$, set: setHWWalletAddressRD } = observableState<HWWalletAddressRD>(RD.initial)
 
 const retrieveLedgerAddress = (network: Network, walletIndex: number) =>
   FP.pipe(
@@ -18,14 +18,14 @@ const retrieveLedgerAddress = (network: Network, walletIndex: number) =>
     map(RD.fromEither),
     startWith(RD.pending),
     catchError((error) => Rx.of(RD.failure(error)))
-  ).subscribe(setLedgerAddressRD)
+  ).subscribe(setHWWalletAddressRD)
 
 const { get$: ledgerTxRD$, set: setLedgerTxRD } = observableState<LedgerTxHashRD>(RD.initial)
 
 const ledgerTx$ = (network: Network, params: TxParams): LedgerTxHashLD =>
   Rx.of(
     RD.failure({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: `Not implemented for BTC ${network} ${params}`
     })
   )
@@ -36,7 +36,7 @@ const pushLedgerTx = (network: Network, params: LedgerBTCTxInfo): Rx.Subscriptio
 export const createLedgerService = (): LedgerService => ({
   ledgerAddress$,
   retrieveLedgerAddress,
-  removeLedgerAddress: () => setLedgerAddressRD(RD.initial),
+  removeLedgerAddress: () => setHWWalletAddressRD(RD.initial),
   ledgerTxRD$,
   pushLedgerTx,
   resetLedgerTx: () => setLedgerTxRD(RD.initial)

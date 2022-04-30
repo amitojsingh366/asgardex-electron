@@ -2,7 +2,7 @@ import TransportNodeHidSingleton from '@ledgerhq/hw-transport-node-hid-singleton
 import { BCHChain, BNBChain, BTCChain, DOGEChain, LTCChain, THORChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
 
-import { IPCLedgerAdddressParams, LedgerError, LedgerErrorId } from '../../../shared/api/types'
+import { IPCLedgerAdddressParams, HWWalletError, HWWalletErrorId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
 import { WalletAddress } from '../../../shared/wallet/types'
 import { getAddress as getBNBAddress, verifyAddress as verifyBNBAddress } from './binance/address'
@@ -16,9 +16,9 @@ export const getAddress = async ({
   chain,
   network,
   walletIndex
-}: IPCLedgerAdddressParams): Promise<E.Either<LedgerError, WalletAddress>> => {
+}: IPCLedgerAdddressParams): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
-    let res: E.Either<LedgerError, WalletAddress>
+    let res: E.Either<HWWalletError, WalletAddress>
     const transport = await TransportNodeHidSingleton.open()
     switch (chain) {
       case THORChain:
@@ -41,7 +41,7 @@ export const getAddress = async ({
         break
       default:
         res = E.left({
-          errorId: LedgerErrorId.NOT_IMPLEMENTED,
+          errorId: HWWalletErrorId.NOT_IMPLEMENTED,
           msg: `getAddress for ${chain} has not been implemented`
         })
     }
@@ -49,7 +49,7 @@ export const getAddress = async ({
     return res
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.GET_ADDRESS_FAILED,
+      errorId: HWWalletErrorId.GET_ADDRESS_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

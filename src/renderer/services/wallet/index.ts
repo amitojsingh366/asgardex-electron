@@ -1,6 +1,7 @@
 import { network$ } from '../app/service'
 import { createBalancesService } from './balances'
 import { setSelectedAsset, selectedAsset$, client$ } from './common'
+import { createKeepKeyService } from './keepkey'
 import { keystoreService, removeKeystore } from './keystore'
 import { createLedgerService } from './ledger'
 import { getTxs$, loadTxs, explorerUrl$, resetTxsPage } from './transaction'
@@ -10,10 +11,15 @@ const { askLedgerAddress$, getLedgerAddress$, verifyLedgerAddress, removeLedgerA
     keystore$: keystoreService.keystore$
   })
 
+const { keepkeyAddresses$, askKeepKeyAddress$, getKeepKeyAddress$, removeKeepKeyAddress } = createKeepKeyService({
+  keystore$: keystoreService.keystore$
+})
+
 const { reloadBalances, reloadBalancesByChain, balancesState$, chainBalances$ } = createBalancesService({
   keystore$: keystoreService.keystore$,
   network$,
-  getLedgerAddress$
+  getLedgerAddress$,
+  getKeepKeyAddress$
 })
 
 /**
@@ -37,5 +43,9 @@ export {
   askLedgerAddress$,
   getLedgerAddress$,
   verifyLedgerAddress,
-  removeLedgerAddress
+  removeLedgerAddress,
+  keepkeyAddresses$,
+  askKeepKeyAddress$,
+  getKeepKeyAddress$,
+  removeKeepKeyAddress
 }

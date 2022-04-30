@@ -15,6 +15,7 @@ const wallet: WalletMessages = {
   'wallet.action.connect': 'Connecter',
   'wallet.action.import': 'Importer',
   'wallet.action.create': 'Créer',
+  'wallet.action.keepkey': 'Connect KeepKey',
   'wallet.action.deposit': 'Déposer',
   'wallet.balance.total.poolAssets': 'Total balance of pool assets - FR',
   'wallet.balance.total.poolAssets.info':
@@ -43,6 +44,7 @@ const wallet: WalletMessages = {
   'wallet.txs.history': 'Historique des transactions',
   'wallet.empty.phrase.import': 'Importez un portefeuille existant contenant des fonds',
   'wallet.empty.phrase.create': "Créez un nouveau portefeuille, et l'alimenter en fonds",
+  'wallet.empty.phrase.keepkey': 'Connect to KeepKey',
   'wallet.create.copy.phrase': 'Copiez la phrase ci-dessous',
   'wallet.create.title': 'Créer un nouveau portefeuille',
   'wallet.create.enter.phrase': 'Entrez la phrase correctement',

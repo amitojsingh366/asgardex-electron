@@ -4,6 +4,7 @@ import { network$ } from '../app/service'
 import { balances$, reloadBalances, reloadBalances$, resetReloadBalances, getBalanceByAddress$ } from './balances'
 import { client$, clientState$, address$, explorerUrl$, addressUI$ } from './common'
 import { createFeesService } from './fees'
+import { createKeepKeyService } from './keepkey'
 import { createLedgerService } from './ledger'
 import { createTransactionService } from './transaction'
 import { subscribeTransfers, miniTickers$ } from './ws'
@@ -12,6 +13,7 @@ const { txs$, tx$, txStatus$, subscribeTx, resetTx, txRD$, sendTx } = createTran
 const { reloadFees, fees$ } = createFeesService({ client$, chain: BNBChain })
 const { ledgerAddress$, retrieveLedgerAddress, removeLedgerAddress, ledgerTxRD$, pushLedgerTx, resetLedgerTx } =
   createLedgerService()
+const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress } = createKeepKeyService()
 
 export {
   client$,
@@ -40,5 +42,8 @@ export {
   ledgerTxRD$,
   pushLedgerTx,
   resetLedgerTx,
+  keepkeyAddress$,
+  removeKeepKeyAddress,
+  retrieveKeepKeyAddress,
   getBalanceByAddress$
 }

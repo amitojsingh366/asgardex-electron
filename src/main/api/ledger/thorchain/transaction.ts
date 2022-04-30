@@ -9,11 +9,11 @@ import { StdTx, auth, BaseAccount } from 'cosmos-client/x/auth'
 import { MsgSend } from 'cosmos-client/x/bank'
 import * as E from 'fp-ts/Either'
 
-import { LedgerError, LedgerErrorId, Network } from '../../../../shared/api/types'
+import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { getClientUrl } from '../../../../shared/thorchain/client'
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
-import { fromLedgerErrorType, getDerivationPath } from './common'
+import { fromHWWalletErrorType, getDerivationPath } from './common'
 import * as Legacy from './transaction-legacy'
 
 /**
@@ -35,7 +35,7 @@ export const send = async ({
   recipient: Address
   memo?: string
   walletIndex: number
-}): Promise<E.Either<LedgerError, TxHash>> => {
+}): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const clientNetwork = toClientNetwork(network)
     const prefix = getPrefix(clientNetwork)
@@ -46,7 +46,7 @@ export const send = async ({
     const { bech32Address, returnCode, compressedPk } = await app.getAddressAndPubKey(path, prefix)
     if (!bech32Address || !compressedPk || returnCode !== LedgerErrorType.NoErrors) {
       return E.left({
-        errorId: fromLedgerErrorType(returnCode),
+        errorId: fromHWWalletErrorType(returnCode),
         msg: `Getting 'bech32Address' or 'compressedPk' from Ledger THORChainApp failed`
       })
     }
@@ -73,7 +73,7 @@ export const send = async ({
     const { account_number, sequence } = account
     if (!account_number || sequence === undefined) {
       return E.left({
-        errorId: fromLedgerErrorType(returnCode),
+        errorId: fromHWWalletErrorType(returnCode),
         msg: `Getting 'account_number' or 'sequence' from 'account' failed (account_number: ${account_number}, sequence:  ${sequence})`
       })
     }
@@ -108,7 +108,7 @@ export const send = async ({
 
     if (!signature) {
       return E.left({
-        errorId: LedgerErrorId.SIGN_FAILED,
+        errorId: HWWalletErrorId.SIGN_FAILED,
         msg: `Signing tx failed`
       })
     }
@@ -136,7 +136,7 @@ export const send = async ({
 
     if (!txhash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Post request to send 'MsgSend' failed`
       })
     }
@@ -144,7 +144,7 @@ export const send = async ({
     return E.right(txhash)
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }
@@ -167,7 +167,7 @@ export const deposit = async ({
   network: Network
   memo: string
   walletIndex: number
-}): Promise<E.Either<LedgerError, TxHash>> => {
+}): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const clientNetwork = toClientNetwork(network)
     const prefix = getPrefix(clientNetwork)
@@ -178,7 +178,7 @@ export const deposit = async ({
     const { bech32Address, returnCode, compressedPk } = await app.getAddressAndPubKey(path, prefix)
     if (!bech32Address || !compressedPk || returnCode !== LedgerErrorType.NoErrors) {
       return E.left({
-        errorId: fromLedgerErrorType(returnCode),
+        errorId: fromHWWalletErrorType(returnCode),
         msg: `Getting 'bech32Address' or 'compressedPk' from Ledger THORChainApp failed`
       })
     }
@@ -222,7 +222,7 @@ export const deposit = async ({
     const { account_number, sequence } = account
     if (!account_number || sequence === undefined) {
       return E.left({
-        errorId: fromLedgerErrorType(returnCode),
+        errorId: fromHWWalletErrorType(returnCode),
         msg: `Getting 'account_number' or 'sequence' from 'account' failed (account_number: ${account_number}, sequence:  ${sequence})`
       })
     }
@@ -234,7 +234,7 @@ export const deposit = async ({
 
     if (!signature) {
       return E.left({
-        errorId: LedgerErrorId.SIGN_FAILED,
+        errorId: HWWalletErrorId.SIGN_FAILED,
         msg: `Signing StdTx failed`
       })
     }
@@ -261,7 +261,7 @@ export const deposit = async ({
 
     if (!txhash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Post request to send 'MsgDeposit' failed`
       })
     }
@@ -269,7 +269,7 @@ export const deposit = async ({
     return E.right(txhash)
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

@@ -101,6 +101,7 @@ export const Upgrade: React.FC<Props> = (props): JSX.Element => {
     const labels: Record<SelectableWalletType, string> = {
       keystore: intl.formatMessage({ id: 'common.keystore' }),
       ledger: 'Ledger',
+      keepkey: 'KeepKey',
       custom: intl.formatMessage({ id: 'common.custom' })
     }
     return FP.pipe(

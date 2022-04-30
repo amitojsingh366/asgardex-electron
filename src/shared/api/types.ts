@@ -68,7 +68,7 @@ export type ApiUrl = {
 
 export type Network = 'testnet' | 'stagenet' | 'mainnet'
 
-export enum LedgerErrorId {
+export enum HWWalletErrorId {
   NO_DEVICE = 'NO_DEVICE',
   ALREADY_IN_USE = 'ALREADY_IN_USE',
   APP_NOT_OPENED = 'APP_NOT_OPENED',
@@ -87,8 +87,8 @@ export enum LedgerErrorId {
   UNKNOWN = 'UNKNOWN'
 }
 
-export type LedgerError = {
-  errorId: LedgerErrorId
+export type HWWalletError = {
+  errorId: HWWalletErrorId
   msg: string
 }
 
@@ -116,14 +116,15 @@ export type LedgerTxParams = LedgerTHORTxParams | LedgerBNBTxParams
 export type IPCLedgerAdddressParams = { chain: Chain; network: Network; walletIndex: number }
 
 export type ApiHDWallet = {
-  getLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<Either<LedgerError, WalletAddress>>
+  getLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<Either<HWWalletError, WalletAddress>>
   verifyLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<boolean>
   sendLedgerTx: (
     params: unknown /* will be de-/serialized by ipcLedgerSendTxParamsIO */
-  ) => Promise<Either<LedgerError, TxHash>>
+  ) => Promise<Either<HWWalletError, TxHash>>
   depositLedgerTx: (
     params: unknown /* will be de-/serialized by ipcLedgerDepositTxParamsIO */
-  ) => Promise<Either<LedgerError, TxHash>>
+  ) => Promise<Either<HWWalletError, TxHash>>
+  getKeepKeyAddress: (params: IPCLedgerAdddressParams) => Promise<Either<HWWalletError, WalletAddress>>
 }
 
 declare global {
