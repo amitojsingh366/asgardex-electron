@@ -9,7 +9,8 @@ import {
   BTCChain,
   BNBChain,
   BCHChain,
-  DOGEChain
+  DOGEChain,
+  TerraChain
 } from '@xchainjs/xchain-util'
 import * as FP from 'fp-ts/lib/function'
 import * as NEA from 'fp-ts/lib/NonEmptyArray'
@@ -26,8 +27,11 @@ import {
   getAssetAmountByAsset,
   getBnbAmountFromBalances,
   getLtcAmountFromBalances,
+  getWalletAddressFromNullableString,
   getWalletBalanceByAsset,
   getWalletByAddress,
+  getWalletIndexFromNullableString,
+  getWalletTypeFromNullableString,
   hasLedgerInBalancesByAsset,
   isEnabledWallet
 } from './walletHelper'
@@ -224,18 +228,67 @@ describe('walletHelper', () => {
       expect(isEnabledWallet(BTCChain, 'testnet', 'ledger')).toBeTruthy()
       expect(isEnabledWallet(BTCChain, 'stagenet', 'ledger')).toBeTruthy()
     })
-
     it('BNB ledger -> true', () => {
       expect(isEnabledWallet(BNBChain, 'mainnet', 'ledger')).toBeTruthy()
       expect(isEnabledWallet(BNBChain, 'testnet', 'ledger')).toBeTruthy()
       expect(isEnabledWallet(BNBChain, 'stagenet', 'ledger')).toBeTruthy()
     })
-    it('DOGE ledger testnet', () => {
+    it('DOGE ledger testnet - false', () => {
       expect(isEnabledWallet(DOGEChain, 'testnet', 'ledger')).toBeFalsy()
     })
-    it('DOGE ledger mainnet/stagenet', () => {
+    it('DOGE ledger mainnet/stagenet -> true', () => {
       expect(isEnabledWallet(DOGEChain, 'mainnet', 'ledger')).toBeTruthy()
       expect(isEnabledWallet(DOGEChain, 'stagenet', 'ledger')).toBeTruthy()
+    })
+    it('Terra ledger mainnet/stagenet/testnet -> true', () => {
+      expect(isEnabledWallet(TerraChain, 'testnet', 'ledger')).toBeTruthy()
+      expect(isEnabledWallet(TerraChain, 'mainnet', 'ledger')).toBeTruthy()
+      expect(isEnabledWallet(TerraChain, 'stagenet', 'ledger')).toBeTruthy()
+    })
+  })
+
+  describe('getWalletAddressFromNullableString', () => {
+    it('address string', () => {
+      const result = getWalletAddressFromNullableString('any-address')
+      expect(result).toEqual(O.some('any-address'))
+    })
+    it('empty string', () => {
+      const result = getWalletAddressFromNullableString('')
+      expect(result).toBeNone()
+    })
+    it('undefined', () => {
+      const result = getWalletAddressFromNullableString()
+      expect(result).toBeNone()
+    })
+  })
+
+  describe('getWalletIndexFromNullableString', () => {
+    it('integer', () => {
+      const result = getWalletIndexFromNullableString('1')
+      expect(result).toEqual(O.some(1))
+    })
+    it('-1', () => {
+      const result = getWalletIndexFromNullableString('-1')
+      expect(result).toBeNone()
+    })
+    it('undefined', () => {
+      const result = getWalletIndexFromNullableString()
+      expect(result).toBeNone()
+    })
+  })
+
+  describe('getWalletTypeFromNullableString', () => {
+    it('keystore', () => {
+      const result = getWalletTypeFromNullableString('keystore')
+      expect(result).toEqual(O.some('keystore'))
+    })
+    it('invalid', () => {
+      const result = getWalletTypeFromNullableString('invalid')
+      expect(result).toBeNone()
+    })
+    it('undefined', () => {
+      const result = getWalletTypeFromNullableString()
+      expect(result).toBeNone()
     })
   })
 })

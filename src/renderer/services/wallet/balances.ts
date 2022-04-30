@@ -621,6 +621,16 @@ export const createBalancesService = ({
   )
 
   /**
+   * Terra Ledger balances
+   */
+  const terraLedgerChainBalance$: ChainBalance$ = chainBalance$({
+    chain: TerraChain,
+    type: 'ledger',
+    walletBalanceType: 'all',
+    getBalanceByAddress$: TERRA.getBalanceByAddress$
+  })
+
+  /**
    * List of `ChainBalances` for all available chains (order is important)
    *
    * It includes keystore + Ledger balances
@@ -644,7 +654,7 @@ export const createBalancesService = ({
         BNB: [bnbChainBalance$, bnbLedgerChainBalance$, bnbKeepKeyChainBalance$],
         LTC: [ltcBalance$, ltcLedgerChainBalance$, ltcKeepKeyChainBalance$],
         DOGE: [dogeChainBalance$, dogeLedgerChainBalance$, dogeKeepKeyChainBalance$],
-        TERRA: [terraChainBalance$]
+        TERRA: [terraChainBalance$, terraLedgerChainBalance$]
       })
     ),
     // we ignore all `ChainBalances` with state of `initial` balances

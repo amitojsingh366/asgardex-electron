@@ -1,3 +1,31 @@
+# 0.15.0 (2022-xx-xx)
+
+## Update
+
+- [PoolDetail] Improve loading behavior [#2234](https://github.com/thorchain/asgardex-electron/issues/2234)
+
+## Fix
+
+- White screen with Ledger Terra wallet connected (#2227)[https://github.com/thorchain/asgardex-electron/issues/2227]
+- [Wallet] Locking wallet at Deposit or Withdraw failed (#2233)[https://github.com/thorchain/asgardex-electron/issues/2233]
+- [e2e] Testcafe is failing [#750](https://github.com/thorchain/asgardex-electron/issues/750)
+
+## Internal
+
+- Update npm dependencies (04-25-2022) - incl. latest Electron@18.x [#2228](https://github.com/thorchain/asgardex-electron/issues/2228)
+
+# 0.14.0 (2022-04-23)
+
+## Add
+
+- [Ledger] Support Terra [#2198](https://github.com/thorchain/asgardex-electron/issues/2198)
+
+## Fix
+
+- [Ledger] Address confirmation removes Ledger BNB account [#2221](https://github.com/thorchain/asgardex-electron/issues/2221)
+- [Ledger] Address confirmation modal is missing for Ledger THOR [#2222](https://github.com/thorchain/asgardex-electron/issues/2222)
+- Update to latest xchain-tc@0.24.1 to include latest out of gas fix [#2220](https://github.com/thorchain/asgardex-electron/pull/2220)
+
 # 0.13.0 (2022-04-19)
 
 ## Add
