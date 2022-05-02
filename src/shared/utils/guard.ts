@@ -22,6 +22,7 @@ export const isNetwork = (u: unknown): u is Network => u === 'mainnet' || u === 
 
 export const isWalletType = (u: unknown): u is WalletType => u === 'keystore' || u === 'ledger'
 export const isLedgerWallet = (walletType: WalletType): boolean => walletType === 'ledger'
+export const isKeepKeyWallet = (walletType: WalletType): boolean => walletType === 'keepkey'
 export const isKeystoreWallet = (walletType: WalletType): boolean => walletType === 'keystore'
 
 const assetGuard = IOG.struct({ symbol: nonEmptyStringGuard, ticker: nonEmptyStringGuard, chain: chainGuard })

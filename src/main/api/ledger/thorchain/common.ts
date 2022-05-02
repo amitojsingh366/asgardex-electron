@@ -1,4 +1,4 @@
-import { HWWalletErrorType } from '@thorchain/ledger-thorchain'
+import { LedgerErrorType } from '@thorchain/ledger-thorchain'
 
 import { HWWalletErrorId } from '../../../../shared/api/types'
 
@@ -7,25 +7,25 @@ export const getDerivationPath = (walletIndex: number) => [44, 931, 0, 0, wallet
 
 export const fromHWWalletErrorType = (error: number): HWWalletErrorId => {
   switch (error) {
-    case HWWalletErrorType.DeviceIsBusy:
+    case LedgerErrorType.DeviceIsBusy:
       return HWWalletErrorId.ALREADY_IN_USE
-    case HWWalletErrorType.SignVerifyError:
+    case LedgerErrorType.SignVerifyError:
       return HWWalletErrorId.SIGN_FAILED
-    case HWWalletErrorType.AppDoesNotSeemToBeOpen:
+    case LedgerErrorType.AppDoesNotSeemToBeOpen:
       return HWWalletErrorId.NO_APP
-    case HWWalletErrorType.DataIsInvalid:
-    case HWWalletErrorType.EmptyBuffer:
-    case HWWalletErrorType.WrongLength:
-    case HWWalletErrorType.OutputBufferTooSmall:
+    case LedgerErrorType.DataIsInvalid:
+    case LedgerErrorType.EmptyBuffer:
+    case LedgerErrorType.WrongLength:
+    case LedgerErrorType.OutputBufferTooSmall:
       return HWWalletErrorId.INVALID_DATA
-    case HWWalletErrorType.TransactionRejected:
+    case LedgerErrorType.TransactionRejected:
       return HWWalletErrorId.REJECTED
-    case HWWalletErrorType.BadKeyHandle:
+    case LedgerErrorType.BadKeyHandle:
       return HWWalletErrorId.INVALID_PUBKEY
-    case HWWalletErrorType.UnknownResponse:
+    case LedgerErrorType.UnknownResponse:
       return HWWalletErrorId.INVALID_RESPONSE
-    case HWWalletErrorType.U2FTimeout:
-    case HWWalletErrorType.Timeout:
+    case LedgerErrorType.U2FTimeout:
+    case LedgerErrorType.Timeout:
       return HWWalletErrorId.TIMEOUT
     default:
       return HWWalletErrorId.UNKNOWN

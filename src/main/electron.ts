@@ -17,6 +17,7 @@ import { DEFAULT_STORAGES } from '../shared/const'
 import { Locale } from '../shared/i18n/types'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
 import { getFileStoreService } from './api/fileStore'
+import { getAddress as getKeepKeyAddress } from './api/keepkey'
 import { saveKeystore, removeKeystore, getKeystore, keystoreExist, exportKeystore, loadKeystore } from './api/keystore'
 import {
   getAddress as getLedgerAddress,
@@ -24,7 +25,6 @@ import {
   deposit as depositLedgerTx,
   verifyLedgerAddress
 } from './api/ledger'
-import { getAddress as getKeepKepAddress } from './api/ledger'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
 
@@ -149,7 +149,7 @@ const initIPC = () => {
   // Ledger
   ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) => getLedgerAddress(params))
   ipcMain.handle(IPCMessages.GET_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
-    getKeepKepAddress(params)
+    getKeepKeyAddress(params)
   )
   ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
     verifyLedgerAddress(params)

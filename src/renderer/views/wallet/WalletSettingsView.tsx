@@ -48,6 +48,7 @@ import {
   isTerraChain
 } from '../../helpers/chainHelper'
 import { sequenceTOptionFromArray } from '../../helpers/fpHelpers'
+import { useKeepKey } from '../../hooks/useKeepKey'
 import { useLedger } from '../../hooks/useLedger'
 import { DEFAULT_NETWORK } from '../../services/const'
 import { WalletAddressAsync } from '../../services/wallet/types'
@@ -86,42 +87,42 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
   const {
     askAddress: askLedgerThorAddress,
     verifyAddress: verifyLedgerThorAddress,
-    address: thorHWWalletAddressRD,
+    address: thorLedgerAddressRD,
     removeAddress: removeLedgerThorAddress
   } = useLedger(THORChain)
 
   const {
     askAddress: askLedgerBnbAddress,
     verifyAddress: verifyLedgerBnbAddress,
-    address: bnbHWWalletAddressRD,
+    address: bnbLedgerAddressRD,
     removeAddress: removeLedgerBnbAddress
   } = useLedger(BNBChain)
 
   const {
     askAddress: askLedgerBtcAddress,
     verifyAddress: verifyLedgerBtcAddress,
-    address: btcHWWalletAddressRD,
+    address: btcLedgerAddressRD,
     removeAddress: removeLedgerBtcAddress
   } = useLedger(BTCChain)
 
   const {
     askAddress: askLedgerLtcAddress,
     verifyAddress: verifyLedgerLtcAddress,
-    address: ltcHWWalletAddressRD,
+    address: ltcLedgerAddressRD,
     removeAddress: removeLedgerLtcAddress
   } = useLedger(LTCChain)
 
   const {
     askAddress: askLedgerBchAddress,
     verifyAddress: verifyLedgerBchAddress,
-    address: bchHWWalletAddressRD,
+    address: bchLedgerAddressRD,
     removeAddress: removeLedgerBchAddress
   } = useLedger(BCHChain)
 
   const {
     askAddress: askLedgerDOGEAddress,
     verifyAddress: verifyLedgerDOGEAddress,
-    address: dogeHWWalletAddressRD,
+    address: dogeLedgerAddressRD,
     removeAddress: removeLedgerDOGEAddress
   } = useLedger(DOGEChain)
 
@@ -131,6 +132,42 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
     address: terraLedgerAddressRD,
     removeAddress: removeLedgerTerraAddress
   } = useLedger(TerraChain)
+
+  const {
+    askAddress: askKeepKeyThorAddress,
+    address: thorKeepKeyAddressRD,
+    removeAddress: removeKeepKeyThorAddress
+  } = useKeepKey(THORChain)
+
+  const {
+    askAddress: askKeepKeyBnbAddress,
+    address: bnbKeepKeyAddressRD,
+    removeAddress: removeKeepKeyBnbAddress
+  } = useKeepKey(BNBChain)
+
+  const {
+    askAddress: askKeepKeyBtcAddress,
+    address: btcKeepKeyAddressRD,
+    removeAddress: removeKeepKeyBtcAddress
+  } = useKeepKey(BTCChain)
+
+  const {
+    askAddress: askKeepKeyLtcAddress,
+    address: ltcKeepKeyAddressRD,
+    removeAddress: removeKeepKeyLtcAddress
+  } = useKeepKey(LTCChain)
+
+  const {
+    askAddress: askKeepKeyBchAddress,
+    address: bchKeepKeyAddressRD,
+    removeAddress: removeKeepKeyBchAddress
+  } = useKeepKey(BCHChain)
+
+  const {
+    askAddress: askKeepKeyDOGEAddress,
+    address: dogeKeepKeyAddressRD,
+    removeAddress: removeKeepKeyDOGEAddress
+  } = useKeepKey(DOGEChain)
 
   const addLedgerAddressHandler = (chain: Chain, walletIndex: number) => {
     if (isThorChain(chain)) return askLedgerThorAddress(walletIndex)
@@ -164,6 +201,28 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
     if (isBchChain(chain)) return removeLedgerBchAddress()
     if (isDogeChain(chain)) return removeLedgerDOGEAddress()
     if (isTerraChain(chain)) return removeLedgerTerraAddress()
+
+    return FP.constVoid
+  }
+
+  const addKeepKeyAddressHandler = (chain: Chain, walletIndex: number) => {
+    if (isThorChain(chain)) return askKeepKeyThorAddress(walletIndex)
+    if (isBnbChain(chain)) return askKeepKeyBnbAddress(walletIndex)
+    if (isBtcChain(chain)) return askKeepKeyBtcAddress(walletIndex)
+    if (isLtcChain(chain)) return askKeepKeyLtcAddress(walletIndex)
+    if (isBchChain(chain)) return askKeepKeyBchAddress(walletIndex)
+    if (isDogeChain(chain)) return askKeepKeyDOGEAddress(walletIndex)
+
+    return FP.constVoid
+  }
+
+  const removeKeepKeyAddressHandler = (chain: Chain) => {
+    if (isThorChain(chain)) return removeKeepKeyThorAddress()
+    if (isBnbChain(chain)) return removeKeepKeyBnbAddress()
+    if (isBtcChain(chain)) return removeKeepKeyBtcAddress()
+    if (isLtcChain(chain)) return removeKeepKeyLtcAddress()
+    if (isBchChain(chain)) return removeKeepKeyBchAddress()
+    if (isDogeChain(chain)) return removeKeepKeyDOGEAddress()
 
     return FP.constVoid
   }
@@ -219,66 +278,66 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        thorHWWalletAddressRD,
+        thorLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, thorHWWalletAddressRD]
+    [intl, thorLedgerAddressRD]
   )
 
   const bnbLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        bnbHWWalletAddressRD,
+        bnbLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, bnbHWWalletAddressRD]
+    [intl, bnbLedgerAddressRD]
   )
 
   const btcLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        btcHWWalletAddressRD,
+        btcLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, btcHWWalletAddressRD]
+    [intl, btcLedgerAddressRD]
   )
 
   const ltcLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        ltcHWWalletAddressRD,
+        ltcLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, ltcHWWalletAddressRD]
+    [intl, ltcLedgerAddressRD]
   )
 
   const bchLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        bchHWWalletAddressRD,
+        bchLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, bchHWWalletAddressRD]
+    [intl, bchLedgerAddressRD]
   )
 
   const dogeLedgerWalletAddress: WalletAddressAsync = useMemo(
     () => ({
       type: 'ledger',
       address: FP.pipe(
-        dogeHWWalletAddressRD,
+        dogeLedgerAddressRD,
         RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
-    [intl, dogeHWWalletAddressRD]
+    [intl, dogeLedgerAddressRD]
   )
 
   const terraLedgerWalletAddress: WalletAddressAsync = useMemo(
@@ -286,42 +345,114 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
       type: 'ledger',
       address: FP.pipe(
         terraLedgerAddressRD,
-        RD.mapLeft(({ errorId, msg }) => Error(`${ledgerErrorIdToI18n(errorId, intl)} (${msg})`))
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
       )
     }),
     [intl, terraLedgerAddressRD]
+  )
+
+  const thorKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        thorKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, thorKeepKeyAddressRD]
+  )
+
+  const bnbKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        bnbKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, bnbKeepKeyAddressRD]
+  )
+
+  const btcKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        btcKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, btcKeepKeyAddressRD]
+  )
+
+  const ltcKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        ltcKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, ltcKeepKeyAddressRD]
+  )
+
+  const bchKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        bchKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, bchKeepKeyAddressRD]
+  )
+
+  const dogeKeepKeyWalletAddress: WalletAddressAsync = useMemo(
+    () => ({
+      type: 'keepkey',
+      address: FP.pipe(
+        dogeKeepKeyAddressRD,
+        RD.mapLeft(({ errorId, msg }) => Error(`${HWWalletErrorIdToI18n(errorId, intl)} (${msg})`))
+      )
+    }),
+    [intl, dogeKeepKeyAddressRD]
   )
 
   const walletAccounts$ = useMemo(() => {
     const thorWalletAccount$ = walletAccount$({
       addressUI$: thorAddressUI$,
       ledgerAddress: thorLedgerWalletAddress,
+      keepkeyAddress: thorKeepKeyWalletAddress,
       chain: THORChain
     })
     const btcWalletAccount$ = walletAccount$({
       addressUI$: btcAddressUI$,
       ledgerAddress: btcLedgerWalletAddress,
+      keepkeyAddress: btcKeepKeyWalletAddress,
       chain: BTCChain
     })
     const ethWalletAccount$ = walletAccount$({ addressUI$: ethAddressUI$, chain: ETHChain })
     const bnbWalletAccount$ = walletAccount$({
       addressUI$: bnbAddressUI$,
       ledgerAddress: bnbLedgerWalletAddress,
+      keepkeyAddress: bnbKeepKeyWalletAddress,
       chain: BNBChain
     })
     const bchWalletAccount$ = walletAccount$({
       addressUI$: bchAddressUI$,
       ledgerAddress: bchLedgerWalletAddress,
+      keepkeyAddress: bchKeepKeyWalletAddress,
       chain: BCHChain
     })
     const ltcWalletAccount$ = walletAccount$({
       addressUI$: ltcAddressUI$,
       ledgerAddress: ltcLedgerWalletAddress,
+      keepkeyAddress: ltcKeepKeyWalletAddress,
       chain: LTCChain
     })
     const dogeWalletAccount$ = walletAccount$({
       addressUI$: dogeAddressUI$,
       ledgerAddress: dogeLedgerWalletAddress,
+      keepkeyAddress: dogeKeepKeyWalletAddress,
       chain: DOGEChain
     })
     const terraWalletAccount$ = walletAccount$({
@@ -378,6 +509,8 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
         addLedgerAddress={addLedgerAddressHandler}
         verifyLedgerAddress={verifyLedgerAddressHandler}
         removeLedgerAddress={removeLedgerAddressHandler}
+        addKeepKeyAddress={addKeepKeyAddressHandler}
+        removeKeepKeyAddress={removeKeepKeyAddressHandler}
         phrase={phrase}
         walletAccounts={walletAccounts}
         clickAddressLinkHandler={clickAddressLinkHandler}

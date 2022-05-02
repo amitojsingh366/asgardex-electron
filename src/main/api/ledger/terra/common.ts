@@ -2,7 +2,7 @@ import { ERROR_DESCRIPTION } from '@terra-money/ledger-terra-js'
 import { Network } from '@xchainjs/xchain-client'
 import { getDefaultRootDerivationPaths } from '@xchainjs/xchain-terra'
 
-import { LedgerErrorId } from '../../../../shared/api/types'
+import { HWWalletErrorId } from '../../../../shared/api/types'
 import { toDerivationPathArray } from '../../../../shared/utils/wallet'
 
 export const getDerivationPath = (walletIndex: number) => {
@@ -27,29 +27,29 @@ const isLedgerErrorType = (value: unknown): value is LedgerErrorType =>
  *
  * Very similar to error handling for Ledger THORChain (see src/main/api/ledger/thorchain/common.ts)
  */
-export const fromLedgerErrorType = (error: number): LedgerErrorId => {
-  if (!isLedgerErrorType(error)) return LedgerErrorId.UNKNOWN
+export const fromLedgerErrorType = (error: number): HWWalletErrorId => {
+  if (!isLedgerErrorType(error)) return HWWalletErrorId.UNKNOWN
 
   switch (error) {
     case 36865: // 0x9001
-      return LedgerErrorId.ALREADY_IN_USE
+      return HWWalletErrorId.ALREADY_IN_USE
     case 28417: // 0x6f01
-      return LedgerErrorId.SIGN_FAILED
+      return HWWalletErrorId.SIGN_FAILED
     case 28160: // 0x6e00
-      return LedgerErrorId.NO_APP
+      return HWWalletErrorId.NO_APP
     case 27012: // 0x6984
     case 27010: // 0x6982
     case 26368: // 0x6700
     case 27011: // 0x6983
-      return LedgerErrorId.INVALID_DATA
+      return HWWalletErrorId.INVALID_DATA
     case 27014: // 0x6986
-      return LedgerErrorId.REJECTED
+      return HWWalletErrorId.REJECTED
     case 27264: // 0x6a80
-      return LedgerErrorId.INVALID_PUBKEY
+      return HWWalletErrorId.INVALID_PUBKEY
     case 14:
     case 5:
-      return LedgerErrorId.TIMEOUT
+      return HWWalletErrorId.TIMEOUT
     default:
-      return LedgerErrorId.UNKNOWN
+      return HWWalletErrorId.UNKNOWN
   }
 }

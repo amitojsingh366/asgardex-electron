@@ -94,12 +94,12 @@ export const sendTx = async ({
       case TerraChain:
         if (!asset) {
           res = E.left({
-            errorId: LedgerErrorId.INVALID_DATA,
+            errorId: HWWalletErrorId.INVALID_DATA,
             msg: `Asset needs to be defined to send Ledger tx on ${chain}`
           })
         } else if (!feeAsset) {
           res = E.left({
-            errorId: LedgerErrorId.INVALID_DATA,
+            errorId: HWWalletErrorId.INVALID_DATA,
             msg: `Fee asset needs to be defined to send Ledger tx on ${chain}`
           })
         } else {

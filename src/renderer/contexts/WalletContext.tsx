@@ -19,7 +19,11 @@ import {
   getLedgerAddress$,
   removeLedgerAddress,
   verifyLedgerAddress,
-  ledgerAddresses$
+  ledgerAddresses$,
+  askKeepKeyAddress$,
+  getKeepKeyAddress$,
+  removeKeepKeyAddress,
+  keepkeyAddresses$
 } from '../services/wallet'
 
 type WalletContextValue = {
@@ -39,6 +43,10 @@ type WalletContextValue = {
   getLedgerAddress$: typeof getLedgerAddress$
   verifyLedgerAddress: typeof verifyLedgerAddress
   removeLedgerAddress: typeof removeLedgerAddress
+  keepkeyAddresses$: typeof keepkeyAddresses$
+  askKeepKeyAddress$: typeof askKeepKeyAddress$
+  getKeepKeyAddress$: typeof getKeepKeyAddress$
+  removeKeepKeyAddress: typeof removeKeepKeyAddress
 }
 
 const initialContext: WalletContextValue = {
@@ -57,7 +65,11 @@ const initialContext: WalletContextValue = {
   askLedgerAddress$,
   getLedgerAddress$,
   verifyLedgerAddress,
-  removeLedgerAddress
+  removeLedgerAddress,
+  keepkeyAddresses$,
+  askKeepKeyAddress$,
+  getKeepKeyAddress$,
+  removeKeepKeyAddress
 }
 const WalletContext = createContext<Option<WalletContextValue>>(none)
 

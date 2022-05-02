@@ -23,7 +23,7 @@ import * as O from 'fp-ts/lib/Option'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { Network } from '../../../../shared/api/types'
-import { isLedgerWallet } from '../../../../shared/utils/guard'
+import { isLedgerWallet, isKeepKeyWallet } from '../../../../shared/utils/guard'
 import { ReactComponent as UnlockOutlined } from '../../../assets/svg/icon-unlock-warning.svg'
 import { WalletPasswordConfirmationModal } from '../../../components/modal/confirmation'
 import { RemoveWalletConfirmationModal } from '../../../components/modal/confirmation/RemoveWalletConfirmationModal'
@@ -58,6 +58,8 @@ type Props = {
   addLedgerAddress: (chain: Chain, walletIndex: number) => void
   verifyLedgerAddress: (chain: Chain, walletIndex: number) => Promise<boolean>
   removeLedgerAddress: (chain: Chain) => void
+  addKeepKeyAddress: (chain: Chain, walletIndex: number) => void
+  removeKeepKeyAddress: (chain: Chain) => void
   phrase: O.Option<string>
   clickAddressLinkHandler: (chain: Chain, address: Address) => void
   validatePassword$: ValidatePasswordHandler
@@ -77,6 +79,8 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
     addLedgerAddress,
     verifyLedgerAddress,
     removeLedgerAddress,
+    addKeepKeyAddress,
+    removeKeepKeyAddress,
     phrase: oPhrase,
     clickAddressLinkHandler,
     validatePassword$
@@ -148,6 +152,14 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
     [removeLedgerAddress]
   )
 
+  // const rejectKeepKeyAddress = useCallback(
+  //   (chain: Chain) => {
+  //     removeKeepKeyAddress(chain)
+  //     setAddressToVerify(O.none)
+  //   },
+  //   [removeKeepKeyAddress]
+  // )
+
   const renderAddress = useCallback(
     (chain: Chain, { type: walletType, address: addressRD }: WalletAddressAsync) => {
       const verifyLedgerAddressHandler = async (address: Address, walletIndex: number) => {
@@ -194,18 +206,65 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
         </Styled.AddLedgerContainer>
       )
 
+      const renderAddKeepKey = (chain: Chain, loading: boolean) => (
+        <Styled.AddLedgerContainer>
+          <Styled.AddLedgerButton loading={loading} onClick={() => addKeepKeyAddress(chain, walletIndexMap[chain])}>
+            <Styled.AddLedgerIcon />
+            Add KeepKey
+            {/* {intl.formatMessage({ id: 'ledger.add.device' })} */}
+          </Styled.AddLedgerButton>
+          {(isBnbChain(chain) ||
+            isThorChain(chain) ||
+            isBtcChain(chain) ||
+            isLtcChain(chain) ||
+            isBchChain(chain) ||
+            isDogeChain(chain)) && (
+            <>
+              <Styled.IndexLabel>{intl.formatMessage({ id: 'setting.wallet.index' })}</Styled.IndexLabel>
+              <Styled.WalletIndexInput
+                value={walletIndexMap[chain].toString()}
+                pattern="[0-9]+"
+                onChange={(value) =>
+                  value !== null && +value >= 0 && setWalletIndexMap({ ...walletIndexMap, [chain]: +value })
+                }
+                style={{ width: 60 }}
+                onPressEnter={() => addKeepKeyAddress(chain, walletIndexMap[chain])}
+              />
+              <InfoIcon tooltip={intl.formatMessage({ id: 'setting.wallet.index.info' })} />
+            </>
+          )}
+        </Styled.AddLedgerContainer>
+      )
+
       // Render addresses depending on its loading status
       return (
         <Styled.AddressContainer>
           {FP.pipe(
             addressRD,
             RD.fold(
-              () => (isLedgerWallet(walletType) ? renderAddLedger(chain, false) : <>...</>),
-              () => (isLedgerWallet(walletType) ? renderAddLedger(chain, true) : <>...</>),
+              () =>
+                isLedgerWallet(walletType) ? (
+                  renderAddLedger(chain, false)
+                ) : isKeepKeyWallet(walletType) ? (
+                  renderAddKeepKey(chain, false)
+                ) : (
+                  <>...</>
+                ),
+              () =>
+                isLedgerWallet(walletType) ? (
+                  renderAddLedger(chain, true)
+                ) : isKeepKeyWallet(walletType) ? (
+                  renderAddKeepKey(chain, true)
+                ) : (
+                  <>...</>
+                ),
+              // () => (isKeepKeyWallet(walletType) ? renderAddKeepKey(chain, false) : <>...</>),
+              // () => (isKeepKeyWallet(walletType) ? renderAddKeepKey(chain, true) : <>...</>),
               (error) => (
                 <div>
                   <Styled.AddressError>{error?.message ?? error.toString()}</Styled.AddressError>
                   {isLedgerWallet(walletType) && renderAddLedger(chain, false)}
+                  {isKeepKeyWallet(walletType) && renderAddKeepKey(chain, false)}
                 </div>
               ),
               ({ address, walletIndex }) => (
@@ -224,6 +283,10 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
                     {isLedgerWallet(walletType) && (
                       <Styled.RemoveLedgerIcon onClick={() => removeLedgerAddress(chain)} />
                     )}
+
+                    {isKeepKeyWallet(walletType) && (
+                      <Styled.RemoveLedgerIcon onClick={() => removeKeepKeyAddress(chain)} />
+                    )}
                   </Styled.AddressWrapper>
                 </>
               )
@@ -240,7 +303,9 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
       addLedgerAddress,
       network,
       clickAddressLinkHandler,
-      removeLedgerAddress
+      removeLedgerAddress,
+      addKeepKeyAddress,
+      removeKeepKeyAddress
     ]
   )
 

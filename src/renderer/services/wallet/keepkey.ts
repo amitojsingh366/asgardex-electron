@@ -83,7 +83,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
       // set pending
       () => setPendingKeepKeyAddress(chain, network),
       // ask for ledger address
-      () => Rx.from(window.apiHDWallet.getLedgerAddress({ chain, network, walletIndex })),
+      () => Rx.from(window.apiHDWallet.getKeepKeyAddress({ chain, network, walletIndex })),
       RxOp.map(RD.fromEither),
       // store address in memory
       RxOp.tap((addressRD: HWWalletAddressRD) => setHWWalletAddressRD({ chain, addressRD, network })),

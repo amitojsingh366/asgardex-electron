@@ -9,7 +9,7 @@ import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
 import { IPCLedgerSendTxParams, ipcLedgerSendTxParamsIO } from '../../../shared/api/io'
-import { LedgerError, Network } from '../../../shared/api/types'
+import { HWWalletError, Network } from '../../../shared/api/types'
 import { isLedgerWallet } from '../../../shared/utils/guard'
 import { Network$ } from '../app/types'
 import * as C from '../clients'
@@ -46,7 +46,7 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       Rx.from(window.apiHDWallet.sendLedgerTx(encoded)),
       RxOp.switchMap(
         FP.flow(
-          E.fold<LedgerError, TxHash, TxHashLD>(
+          E.fold<HWWalletError, TxHash, TxHashLD>(
             ({ msg }) =>
               Rx.of(
                 RD.failure({

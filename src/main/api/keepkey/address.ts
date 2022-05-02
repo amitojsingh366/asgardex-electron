@@ -1,4 +1,3 @@
-import TransportNodeHidSingleton from '@ledgerhq/hw-transport-node-hid-singleton'
 import { BCHChain, BNBChain, BTCChain, DOGEChain, LTCChain, THORChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
 
@@ -19,8 +18,6 @@ export const getAddress = async ({
 }: IPCLedgerAdddressParams): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
     let res: E.Either<HWWalletError, WalletAddress>
-    const transport = await TransportNodeHidSingleton.open()
-
     switch (chain) {
       case THORChain:
         res = await getTHORAddress(network, walletIndex)
@@ -46,7 +43,7 @@ export const getAddress = async ({
           msg: `getAddress for ${chain} has not been implemented`
         })
     }
-    await transport.close()
+    console.log(res)
     return res
   } catch (error) {
     return E.left({

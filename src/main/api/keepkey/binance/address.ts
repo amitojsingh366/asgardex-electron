@@ -17,7 +17,7 @@ export const getAddress = async (
       showDisplay: true
     })
 
-    const binanceAddress = resp.data
+    const binanceAddress = resp.data as string
 
     return E.right({ address: binanceAddress, chain: BNBChain, type: 'keepkey', walletIndex })
   } catch (error) {

@@ -15,7 +15,7 @@ import * as E from 'fp-ts/Either'
 import * as FP from 'fp-ts/lib/function'
 import * as O from 'fp-ts/lib/Option'
 
-import { LedgerError, LedgerErrorId, Network } from '../../../../shared/api/types'
+import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 import { getDerivationPath } from '../terra/common'
@@ -41,12 +41,12 @@ export const send = async ({
   recipient: Address
   memo?: string
   walletIndex: number
-}): Promise<E.Either<LedgerError, TxHash>> => {
+}): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const clientNetwork = toClientNetwork(network)
     if (!AccAddress.validate(recipient)) {
       return E.left({
-        errorId: LedgerErrorId.GET_ADDRESS_FAILED,
+        errorId: HWWalletErrorId.GET_ADDRESS_FAILED,
         msg: `Invalid recipient address ${recipient}`
       })
     }
@@ -54,7 +54,7 @@ export const send = async ({
     const path = FP.pipe(walletIndex, getDerivationPath, O.toNullable)
     if (!path) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_DATA,
+        errorId: HWWalletErrorId.INVALID_DATA,
         msg: `Deriving 'path' for Ledger Terra failed`
       })
     }
@@ -131,7 +131,7 @@ export const send = async ({
 
     if (!txhash) {
       return E.left({
-        errorId: LedgerErrorId.INVALID_RESPONSE,
+        errorId: HWWalletErrorId.INVALID_RESPONSE,
         msg: `Post request to send ${assetToString(asset)} tx failed`
       })
     }
@@ -139,7 +139,7 @@ export const send = async ({
     return E.right(txhash)
   } catch (error) {
     return E.left({
-      errorId: LedgerErrorId.SEND_TX_FAILED,
+      errorId: HWWalletErrorId.SEND_TX_FAILED,
       msg: isError(error) ? error?.message ?? error.toString() : `${error}`
     })
   }

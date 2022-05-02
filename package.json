@@ -115,7 +115,7 @@
     "fs-extra": "^10.0.0",
     "io-ts": "^2.2.16",
     "io-ts-types": "^0.5.16",
-    "keepkey-sdk": "^0.0.5",
+    "keepkey-sdk": "^0.0.7",
     "lodash.shuffle": "^4.2.0",
     "observable-hooks": "^4.1.0",
     "qrcode": "^1.4.4",
@@ -130,6 +130,7 @@
     "rxjs": "^6.6.7",
     "styled-components": "^5.3.1",
     "styled-theme": "^0.3.3",
+    "usb-detection": "^4.14.1",
     "uuid": "^8.3.2",
     "wif": "^2.0.6"
   },

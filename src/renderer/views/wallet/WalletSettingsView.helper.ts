@@ -11,10 +11,12 @@ import { WalletAccount, WalletAddressAsync } from '../../services/wallet/types'
 export const walletAccount$ = ({
   addressUI$,
   ledgerAddress,
+  keepkeyAddress,
   chain
 }: {
   addressUI$: WalletAddress$
   ledgerAddress?: WalletAddressAsync
+  keepkeyAddress?: WalletAddressAsync
   chain: Chain
 }): Rx.Observable<O.Option<WalletAccount>> =>
   FP.pipe(
@@ -25,7 +27,9 @@ export const walletAccount$ = ({
           type: walletAddress.type,
           address: RD.success(walletAddress)
         }
-        const accounts = ledgerAddress ? [keystoreAddress, ledgerAddress] : [keystoreAddress]
+        let accounts = [keystoreAddress]
+        if (ledgerAddress) accounts = [...accounts, ledgerAddress]
+        if (keepkeyAddress) accounts = [...accounts, keepkeyAddress]
         return {
           chain,
           accounts
