@@ -162,6 +162,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
 
   const renderAddress = useCallback(
     (chain: Chain, { type: walletType, address: addressRD }: WalletAddressAsync) => {
+      console.info('renderAddress', chain, addressRD, walletType)
       const verifyLedgerAddressHandler = async (address: Address, walletIndex: number) => {
         setAddressToVerify(
           O.some({

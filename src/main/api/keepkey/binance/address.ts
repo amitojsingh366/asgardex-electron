@@ -12,7 +12,7 @@ export const getAddress = async (
 ): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
     const keepkey = await getKeepKeyClient()
-    const resp = await keepkey.ThorchainGetAddress(null, {
+    const resp = await keepkey.BinanceGetAddress(null, {
       addressNList: [0x80000000 + 44, 0x80000000 + 714, 0x80000000 + 0, 0, walletIndex],
       showDisplay: true
     })

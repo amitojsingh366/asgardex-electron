@@ -6,13 +6,13 @@ import * as FP from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 
 import { Network } from '../../shared/api/types'
-import { isLedgerWallet, isWalletType } from '../../shared/utils/guard'
+import { isKeepKeyWallet, isLedgerWallet, isWalletType } from '../../shared/utils/guard'
 import { WalletAddress, WalletType } from '../../shared/wallet/types'
 import { ZERO_ASSET_AMOUNT } from '../const'
 import { WalletBalances } from '../services/clients'
 import { NonEmptyWalletBalances, WalletBalance } from '../services/wallet/types'
 import { isBnbAsset, isEthAsset, isLtcAsset, isRuneNativeAsset } from './assetHelper'
-import { isBchChain, isDogeChain, isLtcChain, isThorChain } from './chainHelper'
+import { isBchChain, isDogeChain, isLtcChain, isTerraChain, isThorChain } from './chainHelper'
 import { eqAddress, eqAsset, eqWalletType } from './fp/eq'
 import { optionFromNullableString } from './fp/from'
 
@@ -162,6 +162,8 @@ export const isEnabledWallet = (chain: Chain, network: Network, walletType: Wall
   if (isBchChain(chain) && network === 'testnet' && isLedgerWallet(walletType)) return false
   // No DOGE support on `testnet`
   if (isDogeChain(chain) && network === 'testnet' && isLedgerWallet(walletType)) return false
+  // No terra support on KeepKey
+  if (isTerraChain(chain) && isKeepKeyWallet(walletType)) return false
   return true
 }
 

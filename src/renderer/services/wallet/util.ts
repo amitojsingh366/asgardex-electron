@@ -73,6 +73,8 @@ export const walletTypeToI18n = (type: WalletType, intl: IntlShape) => {
   switch (type) {
     case 'ledger':
       return intl.formatMessage({ id: 'ledger.title' })
+    case 'keepkey':
+      return 'KeepKey'
     case 'keystore':
       return intl.formatMessage({ id: 'common.keystore' })
     default:

@@ -22,7 +22,7 @@ import { AssetsNav, TotalValue } from '../../components/wallet/assets'
 import { useChainContext } from '../../contexts/ChainContext'
 import { useMidgardContext } from '../../contexts/MidgardContext'
 import { useWalletContext } from '../../contexts/WalletContext'
-import { isThorChain } from '../../helpers/chainHelper'
+import { isTerraChain, isThorChain } from '../../helpers/chainHelper'
 import { sequenceTOption } from '../../helpers/fpHelpers'
 import { RUNE_PRICE_POOL } from '../../helpers/poolHelper'
 import { addressFromOptionalWalletAddress, addressFromWalletAddress } from '../../helpers/walletHelper'
@@ -60,7 +60,7 @@ export const PoolShareView: React.FC = (): JSX.Element => {
 
   const { addressByChain$ } = useChainContext()
 
-  const { getLedgerAddress$ } = useWalletContext()
+  const { getLedgerAddress$, getKeepKeyAddress$ } = useWalletContext()
 
   useEffect(() => {
     reloadAllPools()
@@ -89,8 +89,17 @@ export const PoolShareView: React.FC = (): JSX.Element => {
       A.map(RxOp.map(RD.toOption))
     )
 
+    // ledger addresses
+    const keepkeyAddresses$: WalletAddress$[] = FP.pipe(
+      ENABLED_CHAINS,
+      A.filter((chain) => !isThorChain(chain) && !isTerraChain(chain)),
+      A.map((chain) => getKeepKeyAddress$(chain, network)),
+      // Transform `KeepKeyAddress` -> `Option<WalletAddress>`
+      A.map(RxOp.map(RD.toOption))
+    )
+
     return FP.pipe(
-      Rx.combineLatest([...addresses$, ...ledgerAddresses$]),
+      Rx.combineLatest([...addresses$, ...ledgerAddresses$, ...keepkeyAddresses$]),
       RxOp.map((v) => v),
       RxOp.switchMap(
         FP.flow(

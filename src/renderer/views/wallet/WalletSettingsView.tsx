@@ -481,17 +481,23 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
   }, [
     thorAddressUI$,
     thorLedgerWalletAddress,
+    thorKeepKeyWalletAddress,
     btcAddressUI$,
     btcLedgerWalletAddress,
+    btcKeepKeyWalletAddress,
     ethAddressUI$,
     bnbAddressUI$,
     bnbLedgerWalletAddress,
+    bnbKeepKeyWalletAddress,
     bchAddressUI$,
     bchLedgerWalletAddress,
+    bchKeepKeyWalletAddress,
     ltcAddressUI$,
     ltcLedgerWalletAddress,
+    ltcKeepKeyWalletAddress,
     dogeAddressUI$,
     dogeLedgerWalletAddress,
+    dogeKeepKeyWalletAddress,
     terraAddressUI$,
     terraLedgerWalletAddress
   ])

@@ -19,6 +19,7 @@ import { RefreshButton } from '../../../components/uielements/button'
 import { AssetsNav } from '../../../components/wallet/assets'
 import { useChainContext } from '../../../contexts/ChainContext'
 import { useWalletContext } from '../../../contexts/WalletContext'
+import { isTerraChain } from '../../../helpers/chainHelper'
 import { eqString } from '../../../helpers/fp/eq'
 import { ordWalletAddressByChain } from '../../../helpers/fp/ord'
 import { useMidgardHistoryActions } from '../../../hooks/useMidgardHistoryActions'
@@ -59,7 +60,7 @@ export const WalletHistoryView: React.FC = () => {
     [addressByChain$]
   )
 
-  const { getLedgerAddress$ } = useWalletContext()
+  const { getLedgerAddress$, getKeepKeyAddress$ } = useWalletContext()
 
   const ledgerAddresses$ = useMemo(
     () =>
@@ -73,10 +74,23 @@ export const WalletHistoryView: React.FC = () => {
     [getLedgerAddress$, network]
   )
 
+  const keepkeyAddresses$ = useMemo(
+    () =>
+      FP.pipe(
+        ENABLED_CHAINS,
+        A.filter((chain) => !isTerraChain(chain)),
+        A.map((chain) => getKeepKeyAddress$(chain, network)),
+        (addresses) => Rx.combineLatest(addresses),
+        // Accept `successfully` added addresses only
+        RxOp.map(A.filterMap(RD.toOption))
+      ),
+    [getKeepKeyAddress$, network]
+  )
+
   const addresses$ = useMemo(
     () =>
       FP.pipe(
-        Rx.combineLatest([keystoreAddresses$, ledgerAddresses$]),
+        Rx.combineLatest([keystoreAddresses$, ledgerAddresses$, keepkeyAddresses$]),
         RxOp.map(A.flatten),
         RxOp.map(A.sort(ordWalletAddressByChain)),
         RxOp.switchMap((addresses) => {
@@ -89,7 +103,7 @@ export const WalletHistoryView: React.FC = () => {
           return Rx.of(addresses)
         })
       ),
-    [keystoreAddresses$, ledgerAddresses$, loadHistory]
+    [keystoreAddresses$, ledgerAddresses$, keepkeyAddresses$, loadHistory]
   )
 
   const addresses = useObservableState(addresses$, [])
