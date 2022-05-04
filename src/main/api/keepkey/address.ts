@@ -4,13 +4,13 @@ import * as E from 'fp-ts/Either'
 import { IPCLedgerAdddressParams, HWWalletError, HWWalletErrorId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
 import { WalletAddress } from '../../../shared/wallet/types'
-import { getAddress as getBNBAddress } from './binance/address'
-import { getAddress as getBTCAddress } from './bitcoin/address'
-import { getAddress as getBCHAddress } from './bitcoincash/address'
+import { getAddress as getBNBAddress, verifyAddress as verifyBNBAddress } from './binance/address'
+import { getAddress as getBTCAddress, verifyAddress as verifyBTCAddress } from './bitcoin/address'
+import { getAddress as getBCHAddress, verifyAddress as verifyBCHAddress } from './bitcoincash/address'
 import { getKeepKeyClient } from './client'
-import { getAddress as getDOGEAddress } from './doge/address'
-import { getAddress as getLTCAddress } from './litecoin/address'
-import { getAddress as getTHORAddress } from './thorchain/address'
+import { getAddress as getDOGEAddress, verifyAddress as verifyDOGEAddress } from './doge/address'
+import { getAddress as getLTCAddress, verifyAddress as verifyLTCAddress } from './litecoin/address'
+import { getAddress as getTHORAddress, verifyAddress as verifyTHORAddress } from './thorchain/address'
 
 export const getAddress = async ({
   chain,
@@ -55,32 +55,30 @@ export const getAddress = async ({
   }
 }
 
-// export const verifyLedgerAddress = async ({ chain, network, walletIndex }: IPCLedgerAdddressParams) => {
-//   const transport = await TransportNodeHidSingleton.open()
-//   let result = false
-//   switch (chain) {
-//     case THORChain:
-//       result = await verifyTHORAddress({ transport, network, walletIndex })
-//       break
-//     case BNBChain:
-//       result = await verifyBNBAddress({ transport, network, walletIndex })
-//       break
-//     case BTCChain:
-//       result = await verifyBTCAddress({ transport, network, walletIndex })
-//       break
-//     case LTCChain:
-//       result = await verifyLTCAddress({ transport, network, walletIndex })
-//       break
-//     case BCHChain:
-//       result = await verifyBCHAddress({ transport, network, walletIndex })
-//       break
-//     case DOGEChain:
-//       result = await verifyDOGEAddress({ transport, network, walletIndex })
-//       break
-//     default:
-//       throw Error(`verifyAddress for ${chain} has not been implemented`)
-//   }
-//   await transport.close()
-
-//   return result
-// }
+export const verifyKeepKeyAddress = async ({ chain, network, walletIndex }: IPCLedgerAdddressParams) => {
+  const keepkey = await getKeepKeyClient()
+  let result = false
+  switch (chain) {
+    case THORChain:
+      result = await verifyTHORAddress({ keepkey, network, walletIndex })
+      break
+    case BNBChain:
+      result = await verifyBNBAddress({ keepkey, network, walletIndex })
+      break
+    case BTCChain:
+      result = await verifyBTCAddress({ keepkey, network, walletIndex })
+      break
+    case LTCChain:
+      result = await verifyLTCAddress({ keepkey, network, walletIndex })
+      break
+    case BCHChain:
+      result = await verifyBCHAddress({ keepkey, network, walletIndex })
+      break
+    case DOGEChain:
+      result = await verifyDOGEAddress({ keepkey, network, walletIndex })
+      break
+    default:
+      throw Error(`verifyAddress for ${chain} has not been implemented`)
+  }
+  return result
+}

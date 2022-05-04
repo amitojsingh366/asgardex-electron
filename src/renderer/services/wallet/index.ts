@@ -11,9 +11,10 @@ const { askLedgerAddress$, getLedgerAddress$, verifyLedgerAddress, removeLedgerA
     keystore$: keystoreService.keystore$
   })
 
-const { keepkeyAddresses$, askKeepKeyAddress$, getKeepKeyAddress$, removeKeepKeyAddress } = createKeepKeyService({
-  keystore$: keystoreService.keystore$
-})
+const { keepkeyAddresses$, askKeepKeyAddress$, getKeepKeyAddress$, verifyKeepKeyAddress, removeKeepKeyAddress } =
+  createKeepKeyService({
+    keystore$: keystoreService.keystore$
+  })
 
 const { reloadBalances, reloadBalancesByChain, balancesState$, chainBalances$ } = createBalancesService({
   keystore$: keystoreService.keystore$,
@@ -47,5 +48,6 @@ export {
   keepkeyAddresses$,
   askKeepKeyAddress$,
   getKeepKeyAddress$,
+  verifyKeepKeyAddress,
   removeKeepKeyAddress
 }

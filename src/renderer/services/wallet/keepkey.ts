@@ -16,7 +16,8 @@ import {
   HWWalletAddressesMap,
   HWWalletAddressLD,
   HWWalletAddressRD,
-  KeepKeyService
+  KeepKeyService,
+  VerifyHWWalletAddressHandler
 } from './types'
 import { hasImportedKeystore } from './util'
 
@@ -43,7 +44,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
   }
 
   /**
-   * Get ledger address from memory
+   * Get keepkey address from memory
    */
   const getKeepKeyAddress$: GetHWWalletAddressHandler = (chain, network) =>
     FP.pipe(
@@ -53,8 +54,11 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
       RxOp.map((addressMap) => addressMap[network])
     )
 
+  const verifyKeepKeyAddress: VerifyHWWalletAddressHandler = async ({ chain, network, walletIndex }) =>
+    window.apiHDWallet.verifyLedgerAddress({ chain, network, walletIndex })
+
   /**
-   * Removes ledger address from memory
+   * Removes keepkey address from memory
    */
   const removeKeepKeyAddress = (chain: Chain, network: Network): void =>
     setHWWalletAddressRD({
@@ -64,7 +68,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
     })
 
   /**
-   * Sets ledger address in `pending` state
+   * Sets keepkey address in `pending` state
    */
   const setPendingKeepKeyAddress = (chain: Chain, network: Network): void =>
     setHWWalletAddressRD({
@@ -74,7 +78,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
     })
 
   /**
-   * Ask Ledger to get address from it
+   * Ask Keepkey to get address from it
    */
   const askKeepKeyAddress$ = (chain: Chain, network: Network, walletIndex: number): HWWalletAddressLD =>
     FP.pipe(
@@ -98,7 +102,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
       RxOp.startWith(RD.pending)
     )
 
-  // Whenever keystore has been removed, reset all stored ledger addresses
+  // Whenever keystore has been removed, reset all stored keepkey addresses
   const keystoreSub = keystore$.subscribe((keystoreState: KeystoreState) => {
     if (!hasImportedKeystore(keystoreState)) {
       setKeepKeyAddresses(INITIAL_LEDGER_ADDRESSES_MAP)
@@ -114,6 +118,7 @@ export const createKeepKeyService = ({ keystore$ }: { keystore$: KeystoreState$ 
     keepkeyAddresses$,
     askKeepKeyAddress$,
     getKeepKeyAddress$,
+    verifyKeepKeyAddress,
     removeKeepKeyAddress,
     dispose
   }

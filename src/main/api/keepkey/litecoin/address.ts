@@ -6,6 +6,7 @@ import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 import { WalletAddress } from '../../../../shared/wallet/types'
+import { VerifyAddressHandler } from '../types'
 import { getDerivationPath } from './common'
 
 export const getAddress = async (
@@ -34,13 +35,19 @@ export const getAddress = async (
   }
 }
 
-// export const verifyAddress: VerifyAddressHandler = async ({ transport, network, walletIndex }) => {
-//   const app = new AppBTC(transport)
-//   const clientNetwork = toClientNetwork(network)
-//   const derivePath = getDerivationPath(walletIndex, clientNetwork)
-//   const _ = await app.getWalletPublicKey(derivePath, {
-//     format: 'bech32', // bech32 format with 84' paths
-//     verify: true // confirm the address on the device
-//   })
-//   return true
-// }
+export const verifyAddress: VerifyAddressHandler = async ({ keepkey, network, walletIndex }) => {
+  try {
+    const clientNetwork = toClientNetwork(network)
+    const derivePath = getDerivationPath(walletIndex, clientNetwork)
+    await keepkey.BtcGetAddress(null, {
+      addressNList: derivePath,
+      showDisplay: true,
+      coin: 'Litecoin',
+      scriptType: 'p2pkh'
+    })
+
+    return true
+  } catch (error) {
+    return false
+  }
+}

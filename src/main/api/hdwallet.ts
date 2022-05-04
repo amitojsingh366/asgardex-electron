@@ -12,5 +12,7 @@ export const apiHDWallet: ApiHDWallet = {
   sendLedgerTx: (params: unknown) => ipcRenderer.invoke(IPCMessages.SEND_LEDGER_TX, params),
   // Note: `params` need to be encoded by `ipcLedgerDepositTxParams` before calling `depositLedgerTx`  */
   depositLedgerTx: (params: unknown) => ipcRenderer.invoke(IPCMessages.DEPOSIT_LEDGER_TX, params),
-  getKeepKeyAddress: (params: IPCLedgerAdddressParams) => ipcRenderer.invoke(IPCMessages.GET_KEEPKEY_ADDRESS, params)
+  getKeepKeyAddress: (params: IPCLedgerAdddressParams) => ipcRenderer.invoke(IPCMessages.GET_KEEPKEY_ADDRESS, params),
+  verifyKeepKeyAddress: (params: IPCLedgerAdddressParams) =>
+    ipcRenderer.invoke(IPCMessages.VERIFY_KEEPKEY_ADDRESS, params)
 }

@@ -136,36 +136,42 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
   const {
     askAddress: askKeepKeyThorAddress,
     address: thorKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyThorAddress,
     removeAddress: removeKeepKeyThorAddress
   } = useKeepKey(THORChain)
 
   const {
     askAddress: askKeepKeyBnbAddress,
     address: bnbKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyBnbAddress,
     removeAddress: removeKeepKeyBnbAddress
   } = useKeepKey(BNBChain)
 
   const {
     askAddress: askKeepKeyBtcAddress,
     address: btcKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyBtcAddress,
     removeAddress: removeKeepKeyBtcAddress
   } = useKeepKey(BTCChain)
 
   const {
     askAddress: askKeepKeyLtcAddress,
     address: ltcKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyLtcAddress,
     removeAddress: removeKeepKeyLtcAddress
   } = useKeepKey(LTCChain)
 
   const {
     askAddress: askKeepKeyBchAddress,
     address: bchKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyBchAddress,
     removeAddress: removeKeepKeyBchAddress
   } = useKeepKey(BCHChain)
 
   const {
     askAddress: askKeepKeyDOGEAddress,
     address: dogeKeepKeyAddressRD,
+    verifyAddress: verifyKeepKeyDOGEAddress,
     removeAddress: removeKeepKeyDOGEAddress
   } = useKeepKey(DOGEChain)
 
@@ -214,6 +220,17 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
     if (isDogeChain(chain)) return askKeepKeyDOGEAddress(walletIndex)
 
     return FP.constVoid
+  }
+
+  const verifyKeepKeyAddressHandler = async (chain: Chain, walletIndex: number) => {
+    if (isThorChain(chain)) return verifyKeepKeyThorAddress(walletIndex)
+    if (isBnbChain(chain)) return verifyKeepKeyBnbAddress(walletIndex)
+    if (isBtcChain(chain)) return verifyKeepKeyBtcAddress(walletIndex)
+    if (isLtcChain(chain)) return verifyKeepKeyLtcAddress(walletIndex)
+    if (isBchChain(chain)) return verifyKeepKeyBchAddress(walletIndex)
+    if (isDogeChain(chain)) return verifyKeepKeyDOGEAddress(walletIndex)
+
+    return false
   }
 
   const removeKeepKeyAddressHandler = (chain: Chain) => {
@@ -516,6 +533,7 @@ export const WalletSettingsView: React.FC = (): JSX.Element => {
         verifyLedgerAddress={verifyLedgerAddressHandler}
         removeLedgerAddress={removeLedgerAddressHandler}
         addKeepKeyAddress={addKeepKeyAddressHandler}
+        verifyKeepKeyAddress={verifyKeepKeyAddressHandler}
         removeKeepKeyAddress={removeKeepKeyAddressHandler}
         phrase={phrase}
         walletAccounts={walletAccounts}

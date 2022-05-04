@@ -138,7 +138,7 @@ export type BalancesService = {
 }
 
 export type GetHWWalletAddressHandler = (chain: Chain, network: Network) => HWWalletAddressLD
-export type VerifyLedgerAddressHandler = (params: {
+export type VerifyHWWalletAddressHandler = (params: {
   chain: Chain
   network: Network
   walletIndex: number
@@ -148,7 +148,7 @@ export type LedgerService = {
   ledgerAddresses$: Rx.Observable<HWWalletAddressesMap>
   askLedgerAddress$: (chain: Chain, network: Network, walletIndex: number) => HWWalletAddressLD
   getLedgerAddress$: GetHWWalletAddressHandler
-  verifyLedgerAddress: VerifyLedgerAddressHandler
+  verifyLedgerAddress: VerifyHWWalletAddressHandler
   removeLedgerAddress: (chain: Chain, network: Network) => void
   dispose: FP.Lazy<void>
 }
@@ -157,6 +157,7 @@ export type KeepKeyService = {
   keepkeyAddresses$: Rx.Observable<HWWalletAddressesMap>
   askKeepKeyAddress$: (chain: Chain, network: Network, walletIndex: number) => HWWalletAddressLD
   getKeepKeyAddress$: GetHWWalletAddressHandler
+  verifyKeepKeyAddress: VerifyHWWalletAddressHandler
   removeKeepKeyAddress: (chain: Chain, network: Network) => void
   dispose: FP.Lazy<void>
 }

@@ -59,6 +59,7 @@ type Props = {
   verifyLedgerAddress: (chain: Chain, walletIndex: number) => Promise<boolean>
   removeLedgerAddress: (chain: Chain) => void
   addKeepKeyAddress: (chain: Chain, walletIndex: number) => void
+  verifyKeepKeyAddress: (chain: Chain, walletIndex: number) => Promise<boolean>
   removeKeepKeyAddress: (chain: Chain) => void
   phrase: O.Option<string>
   clickAddressLinkHandler: (chain: Chain, address: Address) => void
@@ -80,6 +81,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
     verifyLedgerAddress,
     removeLedgerAddress,
     addKeepKeyAddress,
+    verifyKeepKeyAddress,
     removeKeepKeyAddress,
     phrase: oPhrase,
     clickAddressLinkHandler,
@@ -152,6 +154,14 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
     [removeLedgerAddress]
   )
 
+  const rejectKeepKeyAddress = useCallback(
+    (chain: Chain) => {
+      removeKeepKeyAddress(chain)
+      setAddressToVerify(O.none)
+    },
+    [removeKeepKeyAddress]
+  )
+
   // const rejectKeepKeyAddress = useCallback(
   //   (chain: Chain) => {
   //     removeKeepKeyAddress(chain)
@@ -175,6 +185,21 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
           !result ? rejectLedgerAddress(chain) : setAddressToVerify(O.none) /* close modal */
         } catch (_) {
           rejectLedgerAddress(chain)
+        }
+      }
+
+      const verifyKeepKeyAddressHandler = async (address: Address, walletIndex: number) => {
+        setAddressToVerify(
+          O.some({
+            address,
+            chain
+          })
+        )
+        try {
+          const result = await verifyKeepKeyAddress(chain, walletIndex)
+          !result ? rejectKeepKeyAddress(chain) : setAddressToVerify(O.none) /* close modal */
+        } catch (_) {
+          rejectKeepKeyAddress(chain)
         }
       }
 
@@ -286,6 +311,10 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
                     )}
 
                     {isKeepKeyWallet(walletType) && (
+                      <Styled.EyeOutlined onClick={() => verifyKeepKeyAddressHandler(address, walletIndex)} />
+                    )}
+
+                    {isKeepKeyWallet(walletType) && (
                       <Styled.RemoveLedgerIcon onClick={() => removeKeepKeyAddress(chain)} />
                     )}
                   </Styled.AddressWrapper>
@@ -299,13 +328,15 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
     [
       verifyLedgerAddress,
       rejectLedgerAddress,
+      verifyKeepKeyAddress,
+      rejectKeepKeyAddress,
       intl,
       walletIndexMap,
       addLedgerAddress,
+      addKeepKeyAddress,
       network,
       clickAddressLinkHandler,
       removeLedgerAddress,
-      addKeepKeyAddress,
       removeKeepKeyAddress
     ]
   )

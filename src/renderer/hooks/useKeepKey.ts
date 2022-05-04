@@ -13,7 +13,12 @@ import { useNetwork } from './useNetwork'
 export const useKeepKey = (chain: Chain) => {
   const { network } = useNetwork()
 
-  const { askKeepKeyAddress$, getKeepKeyAddress$, removeKeepKeyAddress } = useWalletContext()
+  const { askKeepKeyAddress$, getKeepKeyAddress$, verifyKeepKeyAddress, removeKeepKeyAddress } = useWalletContext()
+
+  const verifyAddress = useCallback(
+    async (walletIndex) => await verifyKeepKeyAddress({ chain, network, walletIndex }),
+    [chain, verifyKeepKeyAddress, network]
+  )
 
   const removeAddress = useCallback(() => removeKeepKeyAddress(chain, network), [chain, removeKeepKeyAddress, network])
 
@@ -35,6 +40,7 @@ export const useKeepKey = (chain: Chain) => {
 
   return {
     askAddress,
+    verifyAddress,
     removeAddress,
     address
   }

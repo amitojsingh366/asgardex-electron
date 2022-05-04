@@ -17,7 +17,7 @@ import {
   HWWalletAddressLD,
   HWWalletAddressRD,
   LedgerService,
-  VerifyLedgerAddressHandler
+  VerifyHWWalletAddressHandler
 } from './types'
 import { hasImportedKeystore } from './util'
 
@@ -54,7 +54,7 @@ export const createLedgerService = ({ keystore$ }: { keystore$: KeystoreState$ }
       RxOp.map((addressMap) => addressMap[network])
     )
 
-  const verifyLedgerAddress: VerifyLedgerAddressHandler = async ({ chain, network, walletIndex }) =>
+  const verifyLedgerAddress: VerifyHWWalletAddressHandler = async ({ chain, network, walletIndex }) =>
     window.apiHDWallet.verifyLedgerAddress({ chain, network, walletIndex })
 
   /**

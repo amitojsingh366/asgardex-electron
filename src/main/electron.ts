@@ -17,7 +17,7 @@ import { DEFAULT_STORAGES } from '../shared/const'
 import { Locale } from '../shared/i18n/types'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
 import { getFileStoreService } from './api/fileStore'
-import { getAddress as getKeepKeyAddress } from './api/keepkey'
+import { getAddress as getKeepKeyAddress, verifyKeepKeyAddress } from './api/keepkey'
 import { saveKeystore, removeKeystore, getKeystore, keystoreExist, exportKeystore, loadKeystore } from './api/keystore'
 import {
   getAddress as getLedgerAddress,
@@ -148,9 +148,6 @@ const initIPC = () => {
   ipcMain.handle(IPCMessages.LOAD_KEYSTORE, () => loadKeystore())
   // Ledger
   ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) => getLedgerAddress(params))
-  ipcMain.handle(IPCMessages.GET_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
-    getKeepKeyAddress(params)
-  )
   ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
     verifyLedgerAddress(params)
   )
@@ -168,6 +165,13 @@ const initIPC = () => {
       E.fold((e) => Promise.reject(e), depositLedgerTx)
     )
   })
+  //KeepKey
+  ipcMain.handle(IPCMessages.GET_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
+    getKeepKeyAddress(params)
+  )
+  ipcMain.handle(IPCMessages.VERIFY_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
+    verifyKeepKeyAddress(params)
+  )
   // Update
   registerAppCheckUpdatedHandler(IS_DEV)
   // Register all file-stored data services

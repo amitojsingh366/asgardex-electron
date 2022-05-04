@@ -5,6 +5,8 @@ import { Client } from 'keepkey-sdk/lib/client'
 import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { isError } from '../../../../shared/utils/guard'
 import { WalletAddress } from '../../../../shared/wallet/types'
+import { VerifyAddressHandler } from '../types'
+import { getDerivationPath } from './common'
 
 export const getAddress = async (
   keepkey: Client,
@@ -12,8 +14,9 @@ export const getAddress = async (
   walletIndex: number
 ): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
+    const derivePath = getDerivationPath(walletIndex)
     const resp = await keepkey.BinanceGetAddress(null, {
-      addressNList: [0x80000000 + 44, 0x80000000 + 714, 0x80000000 + 0, 0, walletIndex],
+      addressNList: derivePath,
       showDisplay: true
     })
 
@@ -28,11 +31,16 @@ export const getAddress = async (
   }
 }
 
-// export const verifyAddress: VerifyAddressHandler = async ({ transport, network, walletIndex }) => {
-//   const app = new AppBNB(transport)
-//   const derive_path = getDerivePath(walletIndex)
-//   const clientNetwork = toClientNetwork(network)
-//   const prefix = getPrefix(clientNetwork)
-//   const { error_message } = await app.showAddress(prefix, derive_path)
-//   return error_message ? false : true
-// }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const verifyAddress: VerifyAddressHandler = async ({ keepkey, network, walletIndex }) => {
+  try {
+    const derivePath = getDerivationPath(walletIndex)
+    await keepkey.BinanceGetAddress(null, {
+      addressNList: derivePath,
+      showDisplay: true
+    })
+    return true
+  } catch (error) {
+    return false
+  }
+}
