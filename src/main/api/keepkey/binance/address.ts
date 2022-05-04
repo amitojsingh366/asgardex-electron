@@ -1,17 +1,17 @@
 import { BNBChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
+import { Client } from 'keepkey-sdk/lib/client'
 
 import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { isError } from '../../../../shared/utils/guard'
 import { WalletAddress } from '../../../../shared/wallet/types'
-import { getKeepKeyClient } from '../client'
 
 export const getAddress = async (
+  keepkey: Client,
   network: Network,
   walletIndex: number
 ): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
-    const keepkey = await getKeepKeyClient()
     const resp = await keepkey.BinanceGetAddress(null, {
       addressNList: [0x80000000 + 44, 0x80000000 + 714, 0x80000000 + 0, 0, walletIndex],
       showDisplay: true

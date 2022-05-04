@@ -9,7 +9,8 @@
 // import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 // import { toClientNetwork } from '../../../../shared/utils/client'
 // import { isError } from '../../../../shared/utils/guard'
-// import { getKeepKeyClient } from '../client'
+// import { Client } from 'keepkey-sdk/lib/client'
+
 // import { getDerivationPath } from './common'
 
 // /**
@@ -40,7 +41,7 @@
 //   }
 
 //   try {
-//     const keepkey = await getKeepKeyClient()
+//
 //     const clientNetwork = toClientNetwork(network)
 //     const derivePath = getDerivationPath(walletIndex, clientNetwork)
 

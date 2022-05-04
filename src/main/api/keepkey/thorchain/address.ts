@@ -3,21 +3,21 @@
 // import { getPrefix } from '@xchainjs/xchain-thorchain'
 import { THORChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
+import { Client } from 'keepkey-sdk/lib/client'
 
 import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 // import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 import { WalletAddress } from '../../../../shared/wallet/types'
-import { getKeepKeyClient } from '../client'
 // import { VerifyAddressHandler } from '../types'
 // import { getDerivationPath } from './common'
 
 export const getAddress = async (
+  keepkey: Client,
   network: Network,
   walletIndex: number
 ): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
-    const keepkey = await getKeepKeyClient()
     const resp = await keepkey.ThorchainGetAddress(null, {
       addressNList: [0x80000000 + 44, 0x80000000 + 931, 0x80000000 + 0, 0, walletIndex],
       showDisplay: true

@@ -1,19 +1,19 @@
 import { DOGEChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
+import { Client } from 'keepkey-sdk/lib/client'
 
 import { HWWalletError, HWWalletErrorId, Network } from '../../../../shared/api/types'
 import { toClientNetwork } from '../../../../shared/utils/client'
 import { isError } from '../../../../shared/utils/guard'
 import { WalletAddress } from '../../../../shared/wallet/types'
-import { getKeepKeyClient } from '../client'
 import { getDerivationPath } from './common'
 
 export const getAddress = async (
+  keepkey: Client,
   network: Network,
   walletIndex: number
 ): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
-    const keepkey = await getKeepKeyClient()
     const clientNetwork = toClientNetwork(network)
     const derivePath = getDerivationPath(walletIndex, clientNetwork)
     const resp = await keepkey.BtcGetAddress(null, {

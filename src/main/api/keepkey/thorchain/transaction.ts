@@ -35,7 +35,7 @@
 //   walletIndex: number
 // }): Promise<E.Either<HWWalletError, TxHash>> => {
 //   try {
-//     const keepkey = await getKeepKeyClient()
+//
 
 //     const resp = await keepkey.ThorchainGetAddress(null, {
 //       addressNList: [0x80000000 + 44, 0x80000000 + 931, 0x80000000 + 0, 0, walletIndex],

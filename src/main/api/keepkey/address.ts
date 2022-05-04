@@ -7,6 +7,7 @@ import { WalletAddress } from '../../../shared/wallet/types'
 import { getAddress as getBNBAddress } from './binance/address'
 import { getAddress as getBTCAddress } from './bitcoin/address'
 import { getAddress as getBCHAddress } from './bitcoincash/address'
+import { getKeepKeyClient } from './client'
 import { getAddress as getDOGEAddress } from './doge/address'
 import { getAddress as getLTCAddress } from './litecoin/address'
 import { getAddress as getTHORAddress } from './thorchain/address'
@@ -18,24 +19,25 @@ export const getAddress = async ({
 }: IPCLedgerAdddressParams): Promise<E.Either<HWWalletError, WalletAddress>> => {
   try {
     let res: E.Either<HWWalletError, WalletAddress>
+    const keepkey = await getKeepKeyClient()
     switch (chain) {
       case THORChain:
-        res = await getTHORAddress(network, walletIndex)
+        res = await getTHORAddress(keepkey, network, walletIndex)
         break
       case BNBChain:
-        res = await getBNBAddress(network, walletIndex)
+        res = await getBNBAddress(keepkey, network, walletIndex)
         break
       case BTCChain:
-        res = await getBTCAddress(network, walletIndex)
+        res = await getBTCAddress(keepkey, network, walletIndex)
         break
       case LTCChain:
-        res = await getLTCAddress(network, walletIndex)
+        res = await getLTCAddress(keepkey, network, walletIndex)
         break
       case BCHChain:
-        res = await getBCHAddress(network, walletIndex)
+        res = await getBCHAddress(keepkey, network, walletIndex)
         break
       case DOGEChain:
-        res = await getDOGEAddress(network, walletIndex)
+        res = await getDOGEAddress(keepkey, network, walletIndex)
         break
       default:
         res = E.left({
