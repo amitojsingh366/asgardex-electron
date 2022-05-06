@@ -13,7 +13,8 @@ const { txs$, tx$, txStatus$, subscribeTx, resetTx, txRD$, sendTx } = createTran
 const { reloadFees, fees$ } = createFeesService({ client$, chain: BNBChain })
 const { ledgerAddress$, retrieveLedgerAddress, removeLedgerAddress, ledgerTxRD$, pushLedgerTx, resetLedgerTx } =
   createLedgerService()
-const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress } = createKeepKeyService()
+const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress, keepkeyTxRD$, pushKeepKeyTx, resetKeepKeyTx } =
+  createKeepKeyService()
 
 export {
   client$,
@@ -45,5 +46,8 @@ export {
   keepkeyAddress$,
   removeKeepKeyAddress,
   retrieveKeepKeyAddress,
+  keepkeyTxRD$,
+  pushKeepKeyTx,
+  resetKeepKeyTx,
   getBalanceByAddress$
 }

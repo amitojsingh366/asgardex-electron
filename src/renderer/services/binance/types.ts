@@ -72,4 +72,7 @@ export type KeepKeyService = {
   keepkeyAddress$: HWWalletAddressLD
   retrieveKeepKeyAddress: (network: Network, walletIndex: number) => void
   removeKeepKeyAddress: () => void
+  keepkeyTxRD$: LedgerTxHashLD
+  pushKeepKeyTx: (network: Network, params: LedgerBNBTxParams) => Rx.Subscription
+  resetKeepKeyTx: () => void
 }

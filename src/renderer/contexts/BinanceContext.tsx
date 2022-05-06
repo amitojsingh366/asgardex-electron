@@ -18,7 +18,11 @@ import {
   ledgerAddress$,
   ledgerTxRD$,
   pushLedgerTx,
-  resetLedgerTx
+  resetLedgerTx,
+  keepkeyTxRD$,
+  keepkeyAddress$,
+  pushKeepKeyTx,
+  resetKeepKeyTx
 } from '../services/binance'
 
 export type BinanceContextValue = {
@@ -40,6 +44,10 @@ export type BinanceContextValue = {
   ledgerTxRD$: typeof ledgerTxRD$
   pushLedgerTx: typeof pushLedgerTx
   resetLedgerTx: typeof resetLedgerTx
+  keepkeyAddress$: typeof keepkeyAddress$
+  keepkeyTxRD$: typeof keepkeyTxRD$
+  pushKeepKeyTx: typeof pushKeepKeyTx
+  resetKeepKeyTx: typeof resetKeepKeyTx
 }
 
 const initialContext: BinanceContextValue = {
@@ -60,7 +68,11 @@ const initialContext: BinanceContextValue = {
   ledgerAddress$,
   ledgerTxRD$,
   pushLedgerTx,
-  resetLedgerTx
+  resetLedgerTx,
+  keepkeyAddress$,
+  keepkeyTxRD$,
+  pushKeepKeyTx,
+  resetKeepKeyTx
 }
 
 const BinanceContext = createContext<BinanceContextValue | null>(null)

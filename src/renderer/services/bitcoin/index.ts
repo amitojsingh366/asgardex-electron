@@ -10,7 +10,8 @@ const { subscribeTx, txRD$, resetTx, sendTx, txs$, tx$, txStatus$ } = createTran
 const { fees$, reloadFees, feesWithRates$, reloadFeesWithRates } = createFeesService(client$)
 const { ledgerAddress$, retrieveLedgerAddress, removeLedgerAddress, pushLedgerTx, ledgerTxRD$, resetLedgerTx } =
   createLedgerService()
-const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress } = createKeepKeyService()
+const { keepkeyAddress$, removeKeepKeyAddress, retrieveKeepKeyAddress, pushKeepKeyTx, keepkeyTxRD$, resetKeepKeyTx } =
+  createKeepKeyService()
 
 export {
   client$,
@@ -42,5 +43,8 @@ export {
   resetLedgerTx,
   keepkeyAddress$,
   removeKeepKeyAddress,
-  retrieveKeepKeyAddress
+  retrieveKeepKeyAddress,
+  pushKeepKeyTx,
+  keepkeyTxRD$,
+  resetKeepKeyTx
 }

@@ -19,6 +19,10 @@ import {
   ledgerTxRD$,
   pushLedgerTx,
   resetLedgerTx,
+  keepkeyAddress$,
+  keepkeyTxRD$,
+  pushKeepKeyTx,
+  resetKeepKeyTx,
   explorerUrl$
 } from '../services/bitcoin'
 
@@ -41,6 +45,10 @@ export type BitcoinContextValue = {
   ledgerTxRD$: typeof ledgerTxRD$
   pushLedgerTx: typeof pushLedgerTx
   resetLedgerTx: typeof resetLedgerTx
+  keepkeyAddress$: typeof keepkeyAddress$
+  keepkeyTxRD$: typeof keepkeyTxRD$
+  pushKeepKeyTx: typeof pushKeepKeyTx
+  resetKeepKeyTx: typeof resetKeepKeyTx
   explorerUrl$: typeof explorerUrl$
 }
 
@@ -63,6 +71,10 @@ const initialContext: BitcoinContextValue = {
   ledgerTxRD$,
   pushLedgerTx,
   resetLedgerTx,
+  keepkeyAddress$,
+  keepkeyTxRD$,
+  pushKeepKeyTx,
+  resetKeepKeyTx,
   explorerUrl$
 }
 
