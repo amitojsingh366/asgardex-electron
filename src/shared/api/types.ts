@@ -119,13 +119,19 @@ export type ApiHDWallet = {
   getLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<Either<HWWalletError, WalletAddress>>
   verifyLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<boolean>
   sendLedgerTx: (
-    params: unknown /* will be de-/serialized by ipcLedgerSendTxParamsIO */
+    params: unknown /* will be de-/serialized by ipcHDWalletSendTxParamsIO */
   ) => Promise<Either<HWWalletError, TxHash>>
   depositLedgerTx: (
-    params: unknown /* will be de-/serialized by ipcLedgerDepositTxParamsIO */
+    params: unknown /* will be de-/serialized by ipcHDWalletDepositTxParamsIO */
   ) => Promise<Either<HWWalletError, TxHash>>
   getKeepKeyAddress: (params: IPCLedgerAdddressParams) => Promise<Either<HWWalletError, WalletAddress>>
   verifyKeepKeyAddress: (params: IPCLedgerAdddressParams) => Promise<boolean>
+  sendKeepKeyTx: (
+    params: unknown /* will be de-/serialized by ipcHDWalletSendTxParamsIO */
+  ) => Promise<Either<HWWalletError, TxHash>>
+  depositKeepKeyTx: (
+    params: unknown /* will be de-/serialized by ipcHDWalletDepositTxParamsIO */
+  ) => Promise<Either<HWWalletError, TxHash>>
 }
 
 declare global {

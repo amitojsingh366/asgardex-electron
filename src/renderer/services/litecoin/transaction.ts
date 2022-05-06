@@ -6,9 +6,9 @@ import * as FP from 'fp-ts/lib/function'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import { IPCLedgerSendTxParams, ipcLedgerSendTxParamsIO } from '../../../shared/api/io'
+import { IPCLedgerSendTxParams, ipcHDWalletSendTxParamsIO } from '../../../shared/api/io'
 import { HWWalletError, Network } from '../../../shared/api/types'
-import { isLedgerWallet } from '../../../shared/utils/guard'
+import { isKeepKeyWallet, isLedgerWallet } from '../../../shared/utils/guard'
 import { Network$ } from '../app/types'
 import * as C from '../clients'
 import { TxHashLD, ErrorId } from '../wallet/types'
@@ -18,9 +18,17 @@ import { TransactionService } from './types'
 export const createTransactionService = (client$: Client$, network$: Network$): TransactionService => {
   const common = C.createTransactionService(client$)
 
-  const sendLedgerTx = ({ network, params }: { network: Network; params: SendTxParams }): TxHashLD => {
+  const sendHWWalletTx = ({
+    network,
+    params,
+    type
+  }: {
+    network: Network
+    params: SendTxParams
+    type: 'keepkey' | 'ledger'
+  }): TxHashLD => {
     const { amount, sender, recipient, memo, walletIndex, feeRate } = params
-    const sendLedgerTxParams: IPCLedgerSendTxParams = {
+    const sendHWWalletTxParams: IPCLedgerSendTxParams = {
       chain: LTCChain,
       asset: AssetLTC,
       feeAsset: undefined,
@@ -32,18 +40,20 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       memo,
       walletIndex
     }
-    const encoded = ipcLedgerSendTxParamsIO.encode(sendLedgerTxParams)
+    const encoded = ipcHDWalletSendTxParamsIO.encode(sendHWWalletTxParams)
 
     return FP.pipe(
-      Rx.from(window.apiHDWallet.sendLedgerTx(encoded)),
+      Rx.from(
+        type === 'keepkey' ? window.apiHDWallet.sendKeepKeyTx(encoded) : window.apiHDWallet.sendLedgerTx(encoded)
+      ),
       RxOp.switchMap(
         FP.flow(
           E.fold<HWWalletError, TxHash, TxHashLD>(
             ({ msg }) =>
               Rx.of(
                 RD.failure({
-                  errorId: ErrorId.SEND_LEDGER_TX,
-                  msg: `Sending Ledger LTC tx failed. (${msg})`
+                  errorId: type === 'keepkey' ? ErrorId.SEND_KEEPKEY_TX : ErrorId.SEND_LEDGER_TX,
+                  msg: `Sending ${type === 'keepkey' ? 'KeepKey' : 'Ledger'} LTC tx failed. (${msg})`
                 })
               ),
             (txHash) => Rx.of(RD.success(txHash))
@@ -53,12 +63,12 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       RxOp.startWith(RD.pending)
     )
   }
-
   const sendTx = (params: SendTxParams): TxHashLD =>
     FP.pipe(
       network$,
       RxOp.switchMap((network) => {
-        if (isLedgerWallet(params.walletType)) return sendLedgerTx({ network, params })
+        if (isKeepKeyWallet(params.walletType)) return sendHWWalletTx({ network, params, type: 'keepkey' })
+        if (isLedgerWallet(params.walletType)) return sendHWWalletTx({ network, params, type: 'ledger' })
 
         return common.sendTx(params)
       })

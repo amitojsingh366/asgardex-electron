@@ -3,7 +3,7 @@ import * as E from 'fp-ts/lib/Either'
 import * as FP from 'fp-ts/lib/function'
 
 import { eqBaseAmount } from '../../renderer/helpers/fp/eq'
-import { BaseAmountEncoded, baseAmountIO, ipcLedgerSendTxParamsIO } from './io'
+import { BaseAmountEncoded, baseAmountIO, ipcHDWalletSendTxParamsIO } from './io'
 
 describe('shared/io', () => {
   describe('baseAmountIO', () => {
@@ -31,7 +31,7 @@ describe('shared/io', () => {
   })
   describe('ipcLedgerSendTxParams', () => {
     it('encode IPCLedgerSendTxParams', () => {
-      const encoded = ipcLedgerSendTxParamsIO.encode({
+      const encoded = ipcHDWalletSendTxParamsIO.encode({
         chain: BNBChain,
         network: 'mainnet',
         asset: AssetBNB,
@@ -66,7 +66,7 @@ describe('shared/io', () => {
         walletIndex: 0,
         feeRate: 1
       }
-      const decoded = ipcLedgerSendTxParamsIO.decode(encoded)
+      const decoded = ipcHDWalletSendTxParamsIO.decode(encoded)
       expect(E.isRight(decoded)).toBeTruthy()
 
       FP.pipe(

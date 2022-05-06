@@ -73,7 +73,7 @@ export const networkIO = new t.Type(
   t.identity
 )
 
-export const ipcLedgerSendTxParamsIO = t.type({
+export const ipcHDWalletSendTxParamsIO = t.type({
   chain: chainIO,
   network: networkIO,
   sender: t.union([t.string, t.undefined]),
@@ -86,9 +86,9 @@ export const ipcLedgerSendTxParamsIO = t.type({
   feeRate: t.number
 })
 
-export type IPCLedgerSendTxParams = t.TypeOf<typeof ipcLedgerSendTxParamsIO>
+export type IPCLedgerSendTxParams = t.TypeOf<typeof ipcHDWalletSendTxParamsIO>
 
-export const ipcLedgerDepositTxParamsIO = t.type({
+export const ipcHDWalletDepositTxParamsIO = t.type({
   chain: chainIO,
   network: networkIO,
   asset: t.union([assetIO, t.undefined]),
@@ -97,4 +97,4 @@ export const ipcLedgerDepositTxParamsIO = t.type({
   walletIndex: t.number
 })
 
-export type IPCLedgerDepositTxParams = t.TypeOf<typeof ipcLedgerDepositTxParamsIO>
+export type ipcHDWalletDepositTxParams = t.TypeOf<typeof ipcHDWalletDepositTxParamsIO>

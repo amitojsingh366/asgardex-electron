@@ -8,7 +8,7 @@ import * as O from 'fp-ts/lib/Option'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import { IPCLedgerSendTxParams, ipcLedgerSendTxParamsIO } from '../../../shared/api/io'
+import { IPCLedgerSendTxParams, ipcHDWalletSendTxParamsIO } from '../../../shared/api/io'
 import { HWWalletError, Network } from '../../../shared/api/types'
 import { isLedgerWallet } from '../../../shared/utils/guard'
 import { Network$ } from '../app/types'
@@ -40,7 +40,7 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
       walletIndex,
       feeRate: NaN
     }
-    const encoded = ipcLedgerSendTxParamsIO.encode(sendLedgerTxParams)
+    const encoded = ipcHDWalletSendTxParamsIO.encode(sendLedgerTxParams)
 
     return FP.pipe(
       Rx.from(window.apiHDWallet.sendLedgerTx(encoded)),

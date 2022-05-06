@@ -11,13 +11,18 @@ import windowStateKeeper from 'electron-window-state'
 import * as E from 'fp-ts/lib/Either'
 import * as FP from 'fp-ts/lib/function'
 
-import { ipcLedgerDepositTxParamsIO, ipcLedgerSendTxParamsIO } from '../shared/api/io'
+import { ipcHDWalletDepositTxParamsIO, ipcHDWalletSendTxParamsIO } from '../shared/api/io'
 import { IPCLedgerAdddressParams, StoreFileName } from '../shared/api/types'
 import { DEFAULT_STORAGES } from '../shared/const'
 import { Locale } from '../shared/i18n/types'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
 import { getFileStoreService } from './api/fileStore'
-import { getAddress as getKeepKeyAddress, verifyKeepKeyAddress } from './api/keepkey'
+import {
+  getAddress as getKeepKeyAddress,
+  verifyKeepKeyAddress,
+  sendTx as sendKeepKeyTx,
+  deposit as depositKeepKeyTx
+} from './api/keepkey'
 import { saveKeystore, removeKeystore, getKeystore, keystoreExist, exportKeystore, loadKeystore } from './api/keystore'
 import {
   getAddress as getLedgerAddress,
@@ -154,14 +159,14 @@ const initIPC = () => {
   ipcMain.handle(IPCMessages.SEND_LEDGER_TX, async (_, params: unknown) => {
     return FP.pipe(
       // params need to be decoded
-      ipcLedgerSendTxParamsIO.decode(params),
+      ipcHDWalletSendTxParamsIO.decode(params),
       E.fold((e) => Promise.reject(e), sendLedgerTx)
     )
   })
   ipcMain.handle(IPCMessages.DEPOSIT_LEDGER_TX, async (_, params: unknown) => {
     return FP.pipe(
       // params need to be decoded
-      ipcLedgerDepositTxParamsIO.decode(params),
+      ipcHDWalletDepositTxParamsIO.decode(params),
       E.fold((e) => Promise.reject(e), depositLedgerTx)
     )
   })
@@ -172,6 +177,20 @@ const initIPC = () => {
   ipcMain.handle(IPCMessages.VERIFY_KEEPKEY_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
     verifyKeepKeyAddress(params)
   )
+  ipcMain.handle(IPCMessages.SEND_KEEPKEY_TX, async (_, params: unknown) => {
+    return FP.pipe(
+      // params need to be decoded
+      ipcHDWalletSendTxParamsIO.decode(params),
+      E.fold((e) => Promise.reject(e), sendKeepKeyTx)
+    )
+  })
+  ipcMain.handle(IPCMessages.DEPOSIT_KEEPKEY_TX, async (_, params: unknown) => {
+    return FP.pipe(
+      // params need to be decoded
+      ipcHDWalletDepositTxParamsIO.decode(params),
+      E.fold((e) => Promise.reject(e), depositKeepKeyTx)
+    )
+  })
   // Update
   registerAppCheckUpdatedHandler(IS_DEV)
   // Register all file-stored data services

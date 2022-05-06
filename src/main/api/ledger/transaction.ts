@@ -3,7 +3,7 @@ import { TxHash } from '@xchainjs/xchain-client'
 import { BCHChain, BNBChain, BTCChain, DOGEChain, LTCChain, TerraChain, THORChain } from '@xchainjs/xchain-util'
 import * as E from 'fp-ts/Either'
 
-import { IPCLedgerDepositTxParams, IPCLedgerSendTxParams } from '../../../shared/api/io'
+import { ipcHDWalletDepositTxParams, IPCLedgerSendTxParams } from '../../../shared/api/io'
 import { HWWalletError, HWWalletErrorId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
 import * as BNB from './binance/transaction'
@@ -137,7 +137,7 @@ export const deposit = async ({
   amount,
   memo,
   walletIndex
-}: IPCLedgerDepositTxParams): Promise<E.Either<HWWalletError, TxHash>> => {
+}: ipcHDWalletDepositTxParams): Promise<E.Either<HWWalletError, TxHash>> => {
   try {
     const transport = await TransportNodeHidSingleton.open()
     let res: E.Either<HWWalletError, string>
