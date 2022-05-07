@@ -83,5 +83,7 @@ export const apiHDWallet: ApiHDWallet = {
   verifyLedgerAddress: () => Promise.resolve(true),
   verifyKeepKeyAddress: () => Promise.resolve(true),
   sendLedgerTx: () => Promise.resolve(E.right('tx_hash')),
-  depositLedgerTx: () => Promise.resolve(E.right('tx_hash'))
+  sendKeepKeyTx: () => Promise.resolve(E.right('tx_hash')),
+  depositLedgerTx: () => Promise.resolve(E.right('tx_hash')),
+  depositKeepKeyTx: () => Promise.resolve(E.right('tx_hash'))
 }

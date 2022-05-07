@@ -1,18 +1,22 @@
-# 0.15.0 (2022-xx-xx)
+# 0.14.1 (2022-05-07)
 
 ## Update
 
-- [PoolDetail] Improve loading behavior [#2234](https://github.com/thorchain/asgardex-electron/issues/2234)
+- [PoolDetail] Improve pool details view behavior (loading behavior, error handling, caching data) [#2240](https://github.com/thorchain/asgardex-electron/pull/2240), [#2241](https://github.com/thorchain/asgardex-electron/pull/2241)
+- [Swap] Change default slippage tolerance to 3% [#2237](https://github.com/thorchain/asgardex-electron/issues/2237)
 
 ## Fix
 
-- White screen with Ledger Terra wallet connected (#2227)[https://github.com/thorchain/asgardex-electron/issues/2227]
-- [Wallet] Locking wallet at Deposit or Withdraw failed (#2233)[https://github.com/thorchain/asgardex-electron/issues/2233]
+- [Ledger] White screen with Ledger Terra wallet connected [#2227](https://github.com/thorchain/asgardex-electron/issues/2227)
+- [Wallet] Locking wallet at Deposit or Withdraw failed [#2233](https://github.com/thorchain/asgardex-electron/issues/2233)
 - [e2e] Testcafe is failing [#750](https://github.com/thorchain/asgardex-electron/issues/750)
+- [Swap] Consider fees in swap limit [#2243](https://github.com/thorchain/asgardex-electron/pull/2242)
+- [Swap] Recipient keystore address lost [#2244](https://github.com/thorchain/asgardex-electron/issues/2244)
+- [Swap] Recipient Ledger address lost [#2252](https://github.com/thorchain/asgardex-electron/issues/2252)
 
 ## Internal
 
-- Update npm dependencies (04-25-2022) - incl. latest Electron@18.x [#2228](https://github.com/thorchain/asgardex-electron/issues/2228)
+- Update `npm` dependencies (04-25-2022) - incl. Electron@18.x, React 18.x, latest xchain-\* etc. [#2228](https://github.com/thorchain/asgardex-electron/issues/2228)
 
 # 0.14.0 (2022-04-23)
 

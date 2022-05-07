@@ -44,12 +44,12 @@ export const DropdownContentWrapper = styled(Row)`
 export const SlipLabel = styled(Text)<TextProps & { active: 'true' | 'false' }>`
   text-transform: uppercase;
   padding: 0;
-  font-size: 16px;
-  font-family: 'MainFontRegular';
+  font-size: 14px;
   cursor: pointer;
-  color: ${({ active }) => (active ? palette('gray', 2) : palette('gray', 1))};
+  color: ${palette('gray', 2)};
+  font-family: ${({ active }) => (active === 'true' ? 'MainFontSemiBold' : 'MainFontRegular')};
   &:hover {
-    color: ${palette('gray', 2)};
+    font-family: 'MainFontSemiBold';
   }
 `
 

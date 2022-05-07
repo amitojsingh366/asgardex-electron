@@ -728,7 +728,7 @@ const createPoolsService = (
   const apiGetLiquidityHistory$ = ({ from, to, ...request }: GetLiquidityHistoryRequest): PoolLiquidityHistoryLD =>
     FP.pipe(
       Rx.combineLatest([midgardDefaultApi$, reloadLiquidityHistory$]),
-      RxOp.map(([api]) => api),
+      RxOp.map(([api, _]) => api),
       liveData.chain((api) =>
         FP.pipe(
           api.getLiquidityHistory({
@@ -736,7 +736,11 @@ const createPoolsService = (
             to: O.toUndefined(roundToFiveMinutes(to)),
             ...request
           }),
-          RxOp.map(RD.success),
+          RxOp.map((result) =>
+            result /* result can be null - for whatever reason */
+              ? RD.success(result)
+              : RD.failure(Error('Failed to load liquidity history from Midgard'))
+          ),
           RxOp.startWith(RD.pending),
           RxOp.catchError((e: Error) => Rx.of(RD.failure(e)))
         )
@@ -776,7 +780,11 @@ const createPoolsService = (
             to: O.toUndefined(roundToFiveMinutes(to)),
             ...otherParams
           }),
-          RxOp.map(RD.success),
+          RxOp.map((result) =>
+            result /* result can be null - for whatever reason */
+              ? RD.success(result)
+              : RD.failure(Error('Failed to load swap history from Midgard'))
+          ),
           RxOp.startWith(RD.pending),
           RxOp.catchError((e: Error) => Rx.of(RD.failure(e)))
         )
@@ -821,7 +829,11 @@ const createPoolsService = (
             to: O.toUndefined(roundToFiveMinutes(to)),
             ...otherParams
           }),
-          RxOp.map(RD.success),
+          RxOp.map((result) =>
+            result /* result can be null - for whatever reason */
+              ? RD.success(result)
+              : RD.failure(Error('Failed to load depth history from Midgard'))
+          ),
           RxOp.startWith(RD.pending),
           RxOp.catchError((e: Error) => Rx.of(RD.failure(e)))
         )
@@ -834,7 +846,7 @@ const createPoolsService = (
   const getDepthHistory$ = (params: GetDepthHistoryParams): DepthHistoryLD =>
     FP.pipe(
       Rx.combineLatest([selectedPoolAsset$, reloadDepthHistory$]),
-      RxOp.switchMap(([oSelectedPoolAsset]) =>
+      RxOp.switchMap(([oSelectedPoolAsset, _]) =>
         FP.pipe(
           oSelectedPoolAsset,
           O.fold(
