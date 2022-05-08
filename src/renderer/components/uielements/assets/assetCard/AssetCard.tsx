@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState, RefObject, useCallback, useMemo } from 'react'
 
 import { BTC_DECIMAL } from '@xchainjs/xchain-bitcoin'
@@ -18,7 +19,7 @@ import * as O from 'fp-ts/lib/Option'
 import { useIntl } from 'react-intl'
 
 import { Network } from '../../../../../shared/api/types'
-import { isLedgerWallet } from '../../../../../shared/utils/guard'
+import { isLedgerWallet, isKeepKeyWallet } from '../../../../../shared/utils/guard'
 import { WalletType } from '../../../../../shared/wallet/types'
 import { ZERO_BASE_AMOUNT } from '../../../../const'
 import { isBtcAsset } from '../../../../helpers/assetHelper'
@@ -196,10 +197,10 @@ export const AssetCard: React.FC<Props> = (props): JSX.Element => {
                       (walletType) => (
                         <>
                           <Styled.CheckButton
-                            checked={isLedgerWallet(walletType)}
-                            clickHandler={(checked) => onChangeWalletType(checked ? 'ledger' : 'keystore')}
+                            checked={isKeepKeyWallet(walletType)}
+                            clickHandler={(checked) => onChangeWalletType(checked ? 'keepkey' : 'keystore')}
                             disabled={walletTypeDisabled}>
-                            {intl.formatMessage({ id: 'ledger.title' })}
+                            KeepKey
                           </Styled.CheckButton>
                           {walletTypeTooltip && <InfoIcon color={walletTypeTooltipColor} tooltip={walletTypeTooltip} />}
                         </>

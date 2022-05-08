@@ -1462,7 +1462,7 @@ export const SymDeposit: React.FC<Props> = (props) => {
             walletTypeTooltip={assetWalletTypeTooltip.text}
             walletTypeTooltipColor={assetWalletTypeTooltip.color}
             // Disable ledger selection if RUNE Ledger has been selected
-            walletTypeDisabled={!hasAssetLedger || useRuneLedger}
+            walletTypeDisabled={false}
             onChangeWalletType={onChangeAssetWalletType}
             assetBalance={assetBalance}
             disabled={disabledForm}

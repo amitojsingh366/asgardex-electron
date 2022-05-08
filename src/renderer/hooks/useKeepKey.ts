@@ -16,7 +16,7 @@ export const useKeepKey = (chain: Chain) => {
   const { askKeepKeyAddress$, getKeepKeyAddress$, verifyKeepKeyAddress, removeKeepKeyAddress } = useWalletContext()
 
   const verifyAddress = useCallback(
-    async (walletIndex) => await verifyKeepKeyAddress({ chain, network, walletIndex }),
+    async (walletIndex: number) => await verifyKeepKeyAddress({ chain, network, walletIndex }),
     [chain, verifyKeepKeyAddress, network]
   )
 

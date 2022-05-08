@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { broadcastTx, buildTx } from '@xchainjs/xchain-bitcoin'
 import { Address, FeeRate, TxHash } from '@xchainjs/xchain-client'
 import { BaseAmount } from '@xchainjs/xchain-util'
@@ -55,7 +56,7 @@ export const send = async ({
 
     const haskoinUrl = getHaskoinBTCApiUrl()[network]
 
-    const { utxos } = await buildTx({
+    const { utxos, psbt } = await buildTx({
       amount,
       recipient,
       memo,
@@ -100,15 +101,17 @@ export const send = async ({
       opReturnData: memo
     })
 
-    const txHash = await broadcastTx({ txHex: signedTx.data.serializedTx, haskoinUrl })
+    console.log(utxos, psbt, inputs, outputs, signedTx)
 
-    if (!txHash) {
-      return E.left({
-        errorId: HWWalletErrorId.INVALID_RESPONSE,
-        msg: `Post request to send BTC transaction using Ledger failed`
-      })
-    }
-    return E.right(txHash)
+    // const txHash = await broadcastTx({ txHex: signedTx.data.serializedTx, haskoinUrl })
+
+    // if (!txHash) {
+    //   return E.left({
+    //     errorId: HWWalletErrorId.INVALID_RESPONSE,
+    //     msg: `Post request to send BTC transaction using Ledger failed`
+    //   })
+    // }
+    return E.right('txHash')
   } catch (error) {
     return E.left({
       errorId: HWWalletErrorId.SEND_TX_FAILED,

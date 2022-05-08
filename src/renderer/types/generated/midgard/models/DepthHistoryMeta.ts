@@ -27,11 +27,7 @@ export interface DepthHistoryMeta {
      * @type {string}
      * @memberof DepthHistoryMeta
      */
-<<<<<<< HEAD
-    endLiquidityUnits: string;
-=======
     endLPUnits: string;
->>>>>>> ea066f27754ebd2e48ff9b4381188a9c9c3c68d3
     /**
      * Int64(e8), the amount of Rune in the pool at the end of the interval at time endTime
      * @type {string}
@@ -39,15 +35,12 @@ export interface DepthHistoryMeta {
      */
     endRuneDepth: string;
     /**
-<<<<<<< HEAD
-=======
      * Int64, Synth Units in the pool at the end of the interval at time endTime
      * @type {string}
      * @memberof DepthHistoryMeta
      */
     endSynthUnits: string;
     /**
->>>>>>> ea066f27754ebd2e48ff9b4381188a9c9c3c68d3
      * Int64, The end time of bucket in unix timestamp
      * @type {string}
      * @memberof DepthHistoryMeta
@@ -76,11 +69,7 @@ export interface DepthHistoryMeta {
      * @type {string}
      * @memberof DepthHistoryMeta
      */
-<<<<<<< HEAD
-    startLiquidityUnits: string;
-=======
     startLPUnits: string;
->>>>>>> ea066f27754ebd2e48ff9b4381188a9c9c3c68d3
     /**
      * Int64(e8), the amount of Rune in the pool at the start of the interval at time startTime
      * @type {string}
@@ -88,15 +77,12 @@ export interface DepthHistoryMeta {
      */
     startRuneDepth: string;
     /**
-<<<<<<< HEAD
-=======
      * Int64, Synth Units in the pool at the start of the interval at time startTime
      * @type {string}
      * @memberof DepthHistoryMeta
      */
     startSynthUnits: string;
     /**
->>>>>>> ea066f27754ebd2e48ff9b4381188a9c9c3c68d3
      * Int64, The beginning time of bucket in unix timestamp
      * @type {string}
      * @memberof DepthHistoryMeta
