@@ -114,6 +114,18 @@ export const hasLedgerInBalancesByAsset = (asset: Asset, balances: WalletBalance
     )
   )
 
+export const hasKeepKeyInBalancesByAsset = (asset: Asset, balances: WalletBalances): boolean =>
+  FP.pipe(
+    balances,
+    A.findFirst(
+      ({ walletType, asset: balanceAsset }) => eqAsset.equals(asset, balanceAsset) && isKeepKeyWallet(walletType)
+    ),
+    O.fold(
+      () => false,
+      () => true
+    )
+  )
+
 export const getAssetAmountFromBalances = (
   balances: WalletBalances,
   isAsset: (asset: Asset) => boolean

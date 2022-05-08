@@ -47,6 +47,7 @@ import { liveData, LiveData } from '../../helpers/rx/liveData'
 import {
   filterWalletBalancesByAssets,
   getWalletBalanceByAssetAndWalletType,
+  hasKeepKeyInBalancesByAsset,
   hasLedgerInBalancesByAsset
 } from '../../helpers/walletHelper'
 import { useSubscriptionState } from '../../hooks/useSubscriptionState'
@@ -107,6 +108,7 @@ export type SwapProps = {
   assets: { inAsset: AssetWithDecimal; outAsset: AssetWithDecimal }
   sourceWalletAddress: O.Option<Address>
   sourceLedgerAddress: O.Option<Address>
+  sourceKeepKeyAddress: O.Option<Address>
   poolAddress: O.Option<PoolAddress>
   swap$: SwapStateHandler
   poolsData: PoolsDataMap
@@ -121,6 +123,7 @@ export type SwapProps = {
   approveFee$: ApproveFeeHandler
   targetWalletAddress: O.Option<Address>
   targetLedgerAddress: O.Option<Address>
+  targetKeepKeyAddress: O.Option<Address>
   onChangePath: (path: string) => void
   network: Network
   slipTolerance: SlipTolerance
@@ -141,6 +144,7 @@ export const Swap = ({
   assets: { inAsset: sourceAssetWD, outAsset: targetAssetWD },
   sourceWalletAddress: oInitialSourceWalletAddress,
   sourceLedgerAddress: oSourceLedgerAddress,
+  sourceKeepKeyAddress: oSourceKeepKeyAddress,
   poolAddress: oPoolAddress,
   swap$,
   poolsData,
@@ -153,6 +157,7 @@ export const Swap = ({
   fees$,
   targetWalletAddress: oInitialTargetWalletAddress,
   targetLedgerAddress: oTargetLedgerAddress,
+  targetKeepKeyAddress: oTargetKeepKeyAddress,
   onChangePath,
   network,
   slipTolerance,
@@ -224,8 +229,14 @@ export const Swap = ({
 
   const [useSourceAssetLedger, setUseSourceAssetLedger] = useState(false)
   const [useTargetAssetLedger, setUseTargetAssetLedger] = useState(false)
+  const [useSourceAssetKeepKey, setUseSourceAssetKeepKey] = useState(false)
+  const [useTargetAssetKeepKey, setUseTargetAssetKeepKey] = useState(false)
 
-  const oTargetAddress: O.Option<Address> = useTargetAssetLedger ? oTargetLedgerAddress : oTargetWalletAddress
+  const oTargetAddress: O.Option<Address> = useTargetAssetLedger
+    ? oTargetLedgerAddress
+    : useTargetAssetKeepKey
+    ? oTargetKeepKeyAddress
+    : oTargetWalletAddress
 
   const disableAllPoolActions = useCallback(
     (chain: Chain) => PoolHelpers.disableAllActions({ chain, haltedChains, mimirHalt }),
@@ -285,10 +296,26 @@ export const Swap = ({
 
   const hasTargetAssetLedger = useMemo(() => O.isSome(oTargetLedgerAddress), [oTargetLedgerAddress])
 
+  const hasSourceAssetKeepKey = useMemo(
+    () =>
+      FP.pipe(
+        oSourceAsset,
+        O.map((asset) => hasKeepKeyInBalancesByAsset(asset, allBalances)),
+        O.getOrElse(() => false)
+      ),
+    [oSourceAsset, allBalances]
+  )
+
+  const hasTargetAssetKeepKey = useMemo(() => O.isSome(oTargetKeepKeyAddress), [oTargetKeepKeyAddress])
+
   const oTargetWalletType: O.Option<WalletType> = useMemo(() => {
     // Check for Ledger
     if (hasTargetAssetLedger && eqOAddress.equals(editableTargetWalletAddress, oTargetLedgerAddress)) {
       return O.some('ledger')
+    }
+    // Check for KeepKey
+    if (hasTargetAssetKeepKey && eqOAddress.equals(editableTargetWalletAddress, oTargetKeepKeyAddress)) {
+      return O.some('keepkey')
     }
     // Check for keystore
     if (
@@ -299,11 +326,18 @@ export const Swap = ({
     }
     // unknown type
     return O.none
-  }, [editableTargetWalletAddress, hasTargetAssetLedger, oInitialTargetWalletAddress, oTargetLedgerAddress])
+  }, [
+    hasTargetAssetLedger,
+    editableTargetWalletAddress,
+    oTargetLedgerAddress,
+    hasTargetAssetKeepKey,
+    oTargetKeepKeyAddress,
+    oInitialTargetWalletAddress
+  ])
 
   const sourceWalletType: WalletType = useMemo(
-    () => (useSourceAssetLedger ? 'ledger' : 'keystore'),
-    [useSourceAssetLedger]
+    () => (useSourceAssetLedger ? 'ledger' : useSourceAssetKeepKey ? 'keepkey' : 'keystore'),
+    [useSourceAssetLedger, useSourceAssetKeepKey]
   )
 
   // `AssetWB` of source asset - which might be none (user has no balances for this asset or wallet is locked)
@@ -360,6 +394,10 @@ export const Swap = ({
     reset: resetSwapState,
     subscribe: subscribeSwapState
   } = useSubscriptionState<SwapState>(INITIAL_SWAP_STATE)
+
+  useEffect(() => {
+    console.log(swapState)
+  }, [swapState])
 
   const initialAmountToSwapMax1e8 = useMemo(
     () => baseAmount(0, sourceAssetAmountMax1e8.decimal),
@@ -467,11 +505,12 @@ export const Swap = ({
         oSourceAsset,
         O.map(
           ({ chain }) =>
-            (isBtcChain(chain) || isLtcChain(chain) || isBchChain(chain) || isDogeChain(chain)) && useSourceAssetLedger
+            (isBtcChain(chain) || isLtcChain(chain) || isBchChain(chain) || isDogeChain(chain)) &&
+            (useSourceAssetLedger || useSourceAssetKeepKey)
         ),
         O.getOrElse(() => false)
       ),
-    [useSourceAssetLedger, oSourceAsset]
+    [useSourceAssetLedger, useSourceAssetKeepKey, oSourceAsset]
   )
 
   const swapLimit1e8: O.Option<BaseAmount> = useMemo(() => {
@@ -783,12 +822,12 @@ export const Swap = ({
   }, [oSwapParams, subscribeSwapState, swap$])
 
   const onSubmit = useCallback(() => {
-    if (useSourceAssetLedger) {
+    if (useSourceAssetLedger || useSourceAssetKeepKey) {
       setShowLedgerModal(true)
     } else {
       setShowPasswordModal(true)
     }
-  }, [setShowLedgerModal, useSourceAssetLedger])
+  }, [setShowLedgerModal, useSourceAssetLedger, useSourceAssetKeepKey])
 
   const renderSlider = useMemo(() => {
     const percentage = lockedWallet
@@ -988,7 +1027,7 @@ export const Swap = ({
               oSwapParams,
               O.chain(({ poolAddress, sender }) => {
                 const recipient = poolAddress.address
-                if (useSourceAssetLedger) return O.some({ recipient, sender })
+                if (useSourceAssetLedger || useSourceAssetKeepKey) return O.some({ recipient, sender })
                 return O.none
               })
             )}
@@ -1005,6 +1044,7 @@ export const Swap = ({
       onCloseLedgerModal,
       onSucceedLedgerModal,
       showLedgerModal,
+      useSourceAssetKeepKey,
       useSourceAssetLedger
     ]
   )
@@ -1387,8 +1427,16 @@ export const Swap = ({
         O.getOrElse(() => false)
       )
       setUseTargetAssetLedger(isTargetLedgerAddress)
+
+      // update state of `useTargetAssetLedger`
+      const isTargetKeepKeyAddress = FP.pipe(
+        oTargetKeepKeyAddress,
+        O.map((keepkeyAddress) => eqAddress.equals(keepkeyAddress, address)),
+        O.getOrElse(() => false)
+      )
+      setUseTargetAssetKeepKey(isTargetKeepKeyAddress)
     },
-    [oTargetLedgerAddress]
+    [oTargetLedgerAddress, oTargetKeepKeyAddress]
   )
 
   const renderCustomAddressInput = useMemo(
@@ -1439,6 +1487,21 @@ export const Swap = ({
     setTargetWalletAddress(oAddress)
     setEditableTargetWalletAddress(oAddress)
   }, [oInitialTargetWalletAddress, oTargetLedgerAddress, useTargetAssetLedger])
+
+  const onClickUseSourceAssetKeepKey = useCallback(() => {
+    const useKeepKey = !useSourceAssetKeepKey
+    setUseSourceAssetKeepKey(() => !useSourceAssetKeepKey)
+    const oAddress = useKeepKey ? oSourceKeepKeyAddress : oInitialSourceWalletAddress
+    setSourceWalletAddress(oAddress)
+  }, [oInitialSourceWalletAddress, oSourceKeepKeyAddress, useSourceAssetKeepKey])
+
+  const onClickUseTargetAssetKeepKey = useCallback(() => {
+    const useKeepKey = !useTargetAssetKeepKey
+    setUseTargetAssetKeepKey(useKeepKey)
+    const oAddress = useKeepKey ? oTargetKeepKeyAddress : oInitialTargetWalletAddress
+    setTargetWalletAddress(oAddress)
+    setEditableTargetWalletAddress(oAddress)
+  }, [oInitialTargetWalletAddress, oTargetKeepKeyAddress, useTargetAssetKeepKey])
 
   const renderMemo = useMemo(
     () => (
@@ -1519,6 +1582,12 @@ export const Swap = ({
                               disabled={!hasSourceAssetLedger}>
                               {intl.formatMessage({ id: 'ledger.title' })}
                             </Styled.CheckButton>
+                            <Styled.CheckButton
+                              checked={useSourceAssetKeepKey}
+                              clickHandler={onClickUseSourceAssetKeepKey}
+                              disabled={!hasSourceAssetKeepKey}>
+                              KeepKey
+                            </Styled.CheckButton>
                           </Styled.AssetSelectContainer>
                         )
                       )
@@ -1571,6 +1640,12 @@ export const Swap = ({
                               clickHandler={onClickUseTargetAssetLedger}
                               disabled={!hasTargetAssetLedger}>
                               {intl.formatMessage({ id: 'ledger.title' })}
+                            </Styled.CheckButton>
+                            <Styled.CheckButton
+                              checked={useTargetAssetKeepKey}
+                              clickHandler={onClickUseTargetAssetKeepKey}
+                              disabled={!hasTargetAssetKeepKey}>
+                              KeepKey
                             </Styled.CheckButton>
                           </Styled.AssetSelectContainer>
                         )

@@ -25,7 +25,7 @@ import { useIntl } from 'react-intl'
 import * as RxOp from 'rxjs/operators'
 
 import { Network } from '../../../../shared/api/types'
-import { isLedgerWallet } from '../../../../shared/utils/guard'
+import { isKeepKeyWallet, isLedgerWallet } from '../../../../shared/utils/guard'
 import { WalletType } from '../../../../shared/wallet/types'
 import { SUPPORTED_LEDGER_APPS, ZERO_BASE_AMOUNT } from '../../../const'
 import {
@@ -186,8 +186,9 @@ export const SymDeposit: React.FC<Props> = (props) => {
 
   const prevAsset = useRef<O.Option<Asset>>(O.none)
 
-  const [useRuneLedger, setRuneLedger] = useState(false)
-  const [useAssetLedger, setUseAssetLedger] = useState(false)
+  const [useRuneHWWallet, setRuneHWWallet] = useState(false)
+  const [useAssetHWWallet, setUseAssetHWWallet] = useState(false)
+  const [hwWalletType, setHWWalletType] = useState<'keepkey' | 'ledger'>('keepkey')
 
   const { balances: oWalletBalances, loading: walletBalancesLoading } = walletBalances
 
@@ -209,24 +210,24 @@ export const SymDeposit: React.FC<Props> = (props) => {
   )
 
   const oRuneWB: O.Option<WalletBalance> = useMemo(() => {
-    const walletType = useRuneLedger ? 'ledger' : 'keystore'
+    const walletType = useRuneHWWallet ? hwWalletType : 'keystore'
     const oWalletBalances = NEA.fromArray(poolBasedBalances)
     return WalletHelper.getWalletBalanceByAssetAndWalletType({
       oWalletBalances,
       asset: AssetRuneNative,
       walletType
     })
-  }, [useRuneLedger, poolBasedBalances])
+  }, [useRuneHWWallet, poolBasedBalances, hwWalletType])
 
   const oAssetWB: O.Option<WalletBalance> = useMemo(() => {
-    const walletType = useAssetLedger ? 'ledger' : 'keystore'
+    const walletType = useAssetHWWallet ? hwWalletType : 'keystore'
     const oWalletBalances = NEA.fromArray(poolBasedBalances)
     return WalletHelper.getWalletBalanceByAssetAndWalletType({
       oWalletBalances,
       asset,
       walletType
     })
-  }, [asset, useAssetLedger, poolBasedBalances])
+  }, [asset, useAssetHWWallet, poolBasedBalances, hwWalletType])
 
   const hasAssetLedger = useMemo(
     () => WalletHelper.hasLedgerInBalancesByAsset(asset, poolBasedBalances),
@@ -234,6 +235,16 @@ export const SymDeposit: React.FC<Props> = (props) => {
   )
 
   const hasRuneLedger = useMemo(
+    () => WalletHelper.hasLedgerInBalancesByAsset(AssetRuneNative, poolBasedBalances),
+    [poolBasedBalances]
+  )
+
+  const hasAssetKeepKey = useMemo(
+    () => WalletHelper.hasLedgerInBalancesByAsset(asset, poolBasedBalances),
+    [asset, poolBasedBalances]
+  )
+
+  const hasRuneKeepKey = useMemo(
     () => WalletHelper.hasLedgerInBalancesByAsset(AssetRuneNative, poolBasedBalances),
     [poolBasedBalances]
   )
@@ -254,9 +265,9 @@ export const SymDeposit: React.FC<Props> = (props) => {
         color: 'primary'
       }
 
-    if (useRuneLedger) return { text: intl.formatMessage({ id: 'ledger.deposit.oneside' }), color: 'primary' }
+    if (useRuneHWWallet) return { text: intl.formatMessage({ id: 'ledger.deposit.oneside' }), color: 'primary' }
 
-    if (!hasAssetLedger)
+    if (!hasAssetLedger || !hasAssetKeepKey)
       return {
         text: intl.formatMessage(
           { id: 'ledger.notaddedorzerobalances' },
@@ -268,7 +279,7 @@ export const SymDeposit: React.FC<Props> = (props) => {
       }
 
     return { text: '', color: 'primary' }
-  }, [asset.chain, hasAssetLedger, intl, useRuneLedger])
+  }, [asset.chain, hasAssetLedger, hasAssetKeepKey, intl, useRuneHWWallet])
 
   const runeWalletTypeTooltip: WalletTypeTooltip = useMemo(() => {
     // Different tooltips for different situations (order matters):
@@ -286,9 +297,9 @@ export const SymDeposit: React.FC<Props> = (props) => {
         color: 'primary'
       }
 
-    if (useAssetLedger) return { text: intl.formatMessage({ id: 'ledger.deposit.oneside' }), color: 'primary' }
+    if (useAssetHWWallet) return { text: intl.formatMessage({ id: 'ledger.deposit.oneside' }), color: 'primary' }
 
-    if (!hasRuneLedger)
+    if (!hasRuneLedger || !hasRuneKeepKey)
       return {
         text: intl.formatMessage(
           { id: 'ledger.notaddedorzerobalances' },
@@ -300,7 +311,7 @@ export const SymDeposit: React.FC<Props> = (props) => {
       }
 
     return { text: '', color: 'primary' }
-  }, [hasRuneLedger, intl, useAssetLedger])
+  }, [hasRuneLedger, hasRuneKeepKey, intl, useAssetHWWallet])
 
   /** Asset balance based on original decimal */
   const assetBalance: BaseAmount = useMemo(
@@ -366,12 +377,12 @@ export const SymDeposit: React.FC<Props> = (props) => {
 
   const oChainAssetBalance: O.Option<BaseAmount> = useMemo(() => {
     const chainAsset = getChainAsset(asset.chain)
-    const walletType = useAssetLedger ? 'ledger' : 'keystore'
+    const walletType = useAssetHWWallet ? hwWalletType : 'keystore'
     return FP.pipe(
       WalletHelper.getWalletBalanceByAssetAndWalletType({ oWalletBalances, asset: chainAsset, walletType }),
       O.map(({ amount }) => amount)
     )
-  }, [asset.chain, oWalletBalances, useAssetLedger])
+  }, [asset.chain, oWalletBalances, useAssetHWWallet, hwWalletType])
 
   const chainAssetBalance: BaseAmount = useMemo(
     () =>
@@ -762,12 +773,12 @@ export const SymDeposit: React.FC<Props> = (props) => {
   const [showLedgerModal, setShowLedgerModal] = useState(false)
 
   const onSubmit = useCallback(() => {
-    if (useAssetLedger || useRuneLedger) {
+    if (useAssetHWWallet || useRuneHWWallet) {
       setShowLedgerModal(true)
     } else {
       setShowPasswordModal(true)
     }
-  }, [useAssetLedger, useRuneLedger])
+  }, [useAssetHWWallet, useRuneHWWallet])
 
   const renderFeeError = useCallback(
     (fee: BaseAmount, amount: BaseAmount, asset: Asset) => {
@@ -1308,8 +1319,12 @@ export const SymDeposit: React.FC<Props> = (props) => {
 
   const onChangeRuneWalletType = useCallback(
     (walletType: WalletType) => {
-      setRuneLedger(() => isLedgerWallet(walletType))
+      const isKeepKey = isKeepKeyWallet(walletType)
+      const isLedger = isLedgerWallet(walletType)
+      setRuneHWWallet(() => isKeepKey || isLedger)
+      setHWWalletType(() => (isKeepKey ? 'keepkey' : 'ledger'))
       setRuneWalletType(walletType)
+
       resetEnteredAmounts()
     },
 
@@ -1318,7 +1333,10 @@ export const SymDeposit: React.FC<Props> = (props) => {
 
   const onChangeAssetWalletType = useCallback(
     (walletType: WalletType) => {
-      setUseAssetLedger(() => isLedgerWallet(walletType))
+      const isKeepKey = isKeepKeyWallet(walletType)
+      const isLedger = isLedgerWallet(walletType)
+      setUseAssetHWWallet(() => isKeepKey || isLedger)
+      setHWWalletType(() => (isKeepKey ? 'keepkey' : 'ledger'))
       setAssetWalletType(walletType)
 
       resetEnteredAmounts()
@@ -1458,7 +1476,7 @@ export const SymDeposit: React.FC<Props> = (props) => {
       <Styled.CardsRow gutter={{ lg: 32 }}>
         <Col xs={24} xl={12}>
           <Styled.AssetCard
-            walletType={Helper.getWalletType(asset.chain, useAssetLedger)}
+            walletType={Helper.getWalletType(asset.chain, hwWalletType)}
             walletTypeTooltip={assetWalletTypeTooltip.text}
             walletTypeTooltipColor={assetWalletTypeTooltip.color}
             // Disable ledger selection if RUNE Ledger has been selected
@@ -1499,11 +1517,11 @@ export const SymDeposit: React.FC<Props> = (props) => {
         <Col xs={24} xl={12}>
           <>
             <Styled.AssetCard
-              walletType={Helper.getWalletType(THORChain, useRuneLedger)}
+              walletType={Helper.getWalletType(THORChain, hwWalletType)}
               walletTypeTooltip={runeWalletTypeTooltip.text}
               walletTypeTooltipColor={runeWalletTypeTooltip.color}
               // Disable ledger checkbox if asset ledger is used
-              walletTypeDisabled={!hasRuneLedger || useAssetLedger}
+              walletTypeDisabled={useAssetHWWallet}
               onChangeWalletType={onChangeRuneWalletType}
               assetBalance={runeBalance}
               disabled={disabledForm}
@@ -1582,15 +1600,15 @@ export const SymDeposit: React.FC<Props> = (props) => {
           onSuccess={onSucceedLedgerModal}
           onClose={onCloseLedgerModal}
           visible={showLedgerModal}
-          chain={useRuneLedger ? THORChain : asset.chain}
+          chain={useRuneHWWallet ? THORChain : asset.chain}
           network={network}
           description={intl.formatMessage({ id: 'deposit.ledger.sign' })}
           addresses={FP.pipe(
             oDepositParams,
             O.chain(({ poolAddress, runeSender, assetSender }) => {
               const recipient = poolAddress.address
-              if (useRuneLedger) return O.some({ recipient, sender: runeSender })
-              if (useAssetLedger) return O.some({ recipient, sender: assetSender })
+              if (useRuneHWWallet) return O.some({ recipient, sender: runeSender })
+              if (useAssetHWWallet) return O.some({ recipient, sender: assetSender })
               return O.none
             })
           )}

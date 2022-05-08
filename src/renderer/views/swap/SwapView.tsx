@@ -63,6 +63,7 @@ const SuccessRouteView: React.FC<Props> = ({ sourceAsset, targetAsset }): JSX.El
     balancesState$,
     reloadBalancesByChain,
     getLedgerAddress$,
+    getKeepKeyAddress$,
     keystoreService: { keystore$, validatePassword$ }
   } = useWalletContext()
 
@@ -219,9 +220,27 @@ const SuccessRouteView: React.FC<Props> = ({ sourceAsset, targetAsset }): JSX.El
     O.none
   )
 
+  const [oSourceKeepKeyAddress, updateSourceKeepKeyAddress$] = useObservableState<
+    O.Option<Address>,
+    { chain: Chain; network: Network }
+  >(
+    (sourceKeepKeyAddressChain$) =>
+      FP.pipe(
+        sourceKeepKeyAddressChain$,
+        RxOp.switchMap(({ chain, network }) => getKeepKeyAddress$(chain, network)),
+        RxOp.map((rdAddress) => RD.toOption(rdAddress)),
+        RxOp.map(addressFromOptionalWalletAddress)
+      ),
+    O.none
+  )
+
   useEffect(() => {
     updateSourceLedgerAddress$({ chain: sourceChain, network })
   }, [network, sourceChain, updateSourceLedgerAddress$])
+
+  useEffect(() => {
+    updateSourceKeepKeyAddress$({ chain: sourceChain, network })
+  }, [network, sourceChain, updateSourceKeepKeyAddress$])
 
   const [oTargetLedgerAddress, updateTargetLedgerAddress$] = useObservableState<
     O.Option<Address>,
@@ -237,9 +256,27 @@ const SuccessRouteView: React.FC<Props> = ({ sourceAsset, targetAsset }): JSX.El
     O.none
   )
 
+  const [oTargetKeepKeyAddress, updateTargetKeepKeyAddress$] = useObservableState<
+    O.Option<Address>,
+    { chain: Chain; network: Network }
+  >(
+    (targetKeepKeyAddressChain$) =>
+      FP.pipe(
+        targetKeepKeyAddressChain$,
+        RxOp.switchMap(({ chain, network }) => getKeepKeyAddress$(chain, network)),
+        RxOp.map((rdAddress) => RD.toOption(rdAddress)),
+        RxOp.map(addressFromOptionalWalletAddress)
+      ),
+    O.none
+  )
+
   useEffect(() => {
     updateTargetLedgerAddress$({ chain: targetChain, network })
   }, [network, targetChain, updateTargetLedgerAddress$])
+
+  useEffect(() => {
+    updateTargetKeepKeyAddress$({ chain: targetChain, network })
+  }, [network, targetChain, updateTargetKeepKeyAddress$])
 
   const { validateSwapAddress } = useValidateAddress(targetAssetChain)
   const openAddressUrl = useOpenAddressUrl(targetAssetChain)
@@ -275,6 +312,7 @@ const SuccessRouteView: React.FC<Props> = ({ sourceAsset, targetAsset }): JSX.El
                   assets={{ inAsset: sourceAsset, outAsset: targetAsset }}
                   sourceWalletAddress={oSourceKeystoreAddress}
                   sourceLedgerAddress={oSourceLedgerAddress}
+                  sourceKeepKeyAddress={oSourceKeepKeyAddress}
                   poolAddress={selectedPoolAddress}
                   availableAssets={availableAssets}
                   poolsData={poolsData}
@@ -285,6 +323,7 @@ const SuccessRouteView: React.FC<Props> = ({ sourceAsset, targetAsset }): JSX.El
                   approveFee$={approveFee$}
                   targetWalletAddress={oTargetKeystoreAddress}
                   targetLedgerAddress={oTargetLedgerAddress}
+                  targetKeepKeyAddress={oTargetKeepKeyAddress}
                   swap$={swap$}
                   reloadBalances={reloadBalances}
                   onChangePath={onChangePath}

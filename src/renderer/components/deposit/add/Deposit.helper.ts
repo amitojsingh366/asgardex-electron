@@ -7,7 +7,8 @@ import * as FP from 'fp-ts/function'
 import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/Option'
 
-import { SUPPORTED_LEDGER_APPS, ZERO_BASE_AMOUNT } from '../../../const'
+import { WalletType } from '../../../../shared/wallet/types'
+import { SUPPORTED_KEEPKEY_APPS, SUPPORTED_LEDGER_APPS, ZERO_BASE_AMOUNT } from '../../../const'
 import {
   convertBaseAmountDecimal,
   isChainAsset,
@@ -243,9 +244,9 @@ export const minBalanceToDeposit = (fees: Pick<DepositFees, 'inFee' | 'refundFee
   return feeToCover.times(1.5)
 }
 
-export const getWalletType = (chain: Chain, useLedger: boolean) =>
+export const getWalletType = (chain: Chain, walletType: WalletType) =>
   FP.pipe(
-    SUPPORTED_LEDGER_APPS,
+    walletType === 'ledger' ? SUPPORTED_LEDGER_APPS : SUPPORTED_KEEPKEY_APPS,
     A.findFirst((chainInList) => eqChain.equals(chainInList, chain)),
-    O.map((_) => (useLedger ? 'ledger' : 'keystore'))
+    O.map((_) => walletType)
   )
