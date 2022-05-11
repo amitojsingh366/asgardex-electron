@@ -56,7 +56,7 @@ export const send = async ({
 
     const haskoinUrl = getHaskoinBTCApiUrl()[network]
 
-    const { utxos, psbt } = await buildTx({
+    const { psbt } = await buildTx({
       amount,
       recipient,
       memo,
@@ -69,28 +69,50 @@ export const send = async ({
       withTxHex: true
     })
 
-    const inputs = utxos.map(async ({ txHex, hash }) => {
-      const txQuery = await axios.get(`https://api.bitcoin.shapeshift.com/api/v1/transaction/${hash}`)
+    console.log(psbt)
+    console.log(psbt.toBase64())
+    console.log(psbt.txOutputs)
+    console.log(psbt.txInputs)
+    console.log(psbt.data)
+
+    // const inputs = utxos.map(async ({ txHex, hash }) => {
+    //   const txQuery = await axios.get(`https://api.bitcoin.shapeshift.com/api/v1/transaction/${hash}`)
+    //   return {
+    //     addressNList: derivePath,
+    //     scriptType: 'p2pkh',
+    //     amount: ,
+    //     vout: 1,
+    //     txid: hash,
+    //     tx: txQuery.data,
+    //     txHex
+    //   }
+    // })
+
+    const inputs = psbt.txInputs.map(async ({ index, hash }) => {
+      const txQuery = await axios.get(`https://api.bitcoin.shapeshift.com/api/v1/transaction/${hash.toString()}`)
       return {
         addressNList: derivePath,
         scriptType: 'p2pkh',
-        amount: amount.amount().toString(),
-        vout: 1,
+        amount: txQuery.data[0].vout[index].value,
+        vout: index,
         txid: hash,
         tx: txQuery.data,
-        txHex
+        txHex: txQuery.data[0].hex
       }
     })
 
-    const outputs = [
-      {
+    const outputs: any[] = []
+
+    psbt.txOutputs.map(({ value }) => {
+      if (value === 0) return {}
+      outputs.push({
         address: recipient,
         addressType: 'spend',
         scriptType: 'p2pkh',
-        amount: amount.minus(10000).amount().toString(),
-        opReturnData: Buffer.from(memo, 'utf-8')
-      }
-    ]
+        amount: value
+      })
+      return {}
+    })
 
     const signedTx = await keepkey.BtcSignTx(null, {
       coin: 'Bitcoin',
@@ -101,8 +123,7 @@ export const send = async ({
       opReturnData: memo
     })
 
-    console.log(utxos, psbt, inputs, outputs, signedTx)
-
+    console.log(signedTx)
     // const txHash = await broadcastTx({ txHex: signedTx.data.serializedTx, haskoinUrl })
 
     // if (!txHash) {

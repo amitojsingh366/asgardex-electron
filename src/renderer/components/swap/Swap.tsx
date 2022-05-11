@@ -822,12 +822,12 @@ export const Swap = ({
   }, [oSwapParams, subscribeSwapState, swap$])
 
   const onSubmit = useCallback(() => {
-    if (useSourceAssetLedger || useSourceAssetKeepKey) {
+    if (useSourceAssetLedger) {
       setShowLedgerModal(true)
     } else {
       setShowPasswordModal(true)
     }
-  }, [setShowLedgerModal, useSourceAssetLedger, useSourceAssetKeepKey])
+  }, [setShowLedgerModal, useSourceAssetLedger])
 
   const renderSlider = useMemo(() => {
     const percentage = lockedWallet
